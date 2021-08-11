@@ -1,0 +1,29 @@
+#!/bin/python
+
+import yaml
+
+INSTALLER_FLAGS = '-Syu --needed --noconfirm'
+MULTILINE_SEP = ' \\\n\t'
+
+def installer_of(spec):
+    return ('pacman', 'yay') [spec['yay'] == True]
+
+def pkg_list_of(spec):
+    if isinstance(spec, list):
+        res = []
+        for pkg in spec:
+            res.extend(pkg_list_of(pkg))
+        return res
+    elif isinstance(spec, str): return spec.split()
+    elif isinstance(spec, dict): return pkg_list_of(spec['pkg'])
+    else: return []
+
+def pkg_script_of(spec):
+    cmd = installer_of(spec) + ' ' + INSTALLER_FLAGS
+    pkg_list = pkg_list_of(spec)
+    return MULTILINE_SEP.join([cmd] + pkg_list)
+
+with open('archerry.yaml') as file:
+    spec = yaml.safe_load(file)
+
+print(pkg_script_of(spec))

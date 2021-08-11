@@ -1,7 +1,7 @@
 yay: true
 
 pkg:
-  - tree tmux calc nvim
+  - tree tmux calc neovim
   - bash-completion fzf ripgrep
   - pipewire pipewire-pulse
   - bluez bluez-tools
