@@ -1,0 +1,124 @@
+yay: true
+
+pkg:
+  - tree tmux calc nvim
+  - bash-completion fzf ripgrep
+  - pipewire pipewire-pulse
+  - bluez bluez-tools
+  - p7zip
+  - tag: net
+    pkg:
+      - curl openssh
+      - transmission-cli
+      - tor torsocks
+      - wireless_tools
+  - tag: devel
+    pkg:
+      - rustup
+      - postgresql postgresql-libs
+      - docker docker-compose
+      - nodejs nvm yarn deno prettier
+      - jdk-openjdk gradle maven
+      - miniserve
+      - shellcheck
+      - go
+  - tag: ui
+    pkg:
+      - xorg xorg-xinit
+      - xf86-input-synaptics
+      - xsel
+      - xcolor
+      - slock
+      - feh scrot
+      - vlc simplescreenrecorder
+      - ttf-fira-sans ttf-fira-code
+      - ttf-material-design-icons
+      - adobe-source-han-sans-otc-fonts
+      - adobe-source-han-serif-otc-fonts
+      - libxft-bgra ttf-twemoji
+      - materia-gtk-theme
+      - pavucontrol
+  - tag: media
+    pkg:
+      - firefox chromium
+      - gimp inkscape
+  - tag: temp
+    pkg: drive-bin ngrok
+
+git:
+  - repo: gitlab.com/osoy/osoy
+    path: ~/.osoy/src/gitlab.com/osoy/osoy
+    make: true
+  - repo: gitlab.com/rasmusmerzin/shl
+    path: ~/.osoy/src/gitlab.com/rasmusmerzin/shl
+    make: true
+  - repo: gitlab.com/rasmusmerzin/archerry
+    path: ~/.osoy/src/gitlab.com/rasmusmerzin/archerry
+  - tag: config
+    git:
+      - repo: github.com/rasmusmerzin/cfg-bash
+        path: ~/.osoy/src/github.com/rasmusmerzin/cfg-bash
+        make: true
+      - repo: github.com/rasmusmerzin/cfg-tmux
+        path: ~/.osoy/src/github.com/rasmusmerzin/cfg-tmux
+        make: true
+      - repo: github.com/rasmusmerzin/cfg-nvim
+        path: ~/.osoy/src/github.com/rasmusmerzin/cfg-nvim
+        make: true
+  - tag: ui
+    git:
+      - repo: github.com/rasmusmerzin/dwm
+        path: ~/.osoy/src/github.com/rasmusmerzin/dwm
+        make: true
+      - repo: github.com/rasmusmerzin/st
+        path: ~/.osoy/src/github.com/rasmusmerzin/st
+        make: true
+      - repo: github.com/rasmusmerzin/dmenu
+        path: ~/.osoy/src/github.com/rasmusmerzin/dmenu
+        make: true
+      - repo: github.com/rasmusmerzin/dwmstatus
+        path: ~/.osoy/src/github.com/rasmusmerzin/dwmstatus
+
+fs:
+  - tag: ui
+    fs:
+      - path: ~/.xinitrc
+        write: |
+          [ -x ~/.fehbg ] && ~/.fehbg
+          dwmstatus &
+          exec dwm
+      - path: /etc/gtk-2.0/gtkrc
+        write: |
+          gtk-theme-name="Materia-dark-compact"
+          gtk-font-name="Fira Sans 10"
+      - path: /etc/gtk-3.0/settings.ini
+        write: |
+          [Settings]
+          gtk-theme-name=Materia-dark-compact
+          gtk-font-name=Fira Sans 10
+      - path: /etc/X11/xorg.conf.d/70-synaptics.conf
+        write: |
+          Section "InputClass"
+          Identifier "touchpad"
+          Driver "synaptics"
+          MatchIsTouchpad "on"
+          Option "TapButton1" "1"
+          Option "TapButton2" "3"
+          Option "TapButton3" "2"
+          Option "VertTwoFingerScroll" "on"
+          Option "HorizEdgeScroll" "on"
+          Option "CircularScrolling" "on"
+          Option "CircScrollTrigger" "2"
+          Option "FingerLow" "30"
+          Option "FingerHigh" "50"
+          Option "MaxTapTime" "125"
+          EndSection
+
+cmd:
+  - ~/.osoy/src/gitlab.com/osoy/osoy/osoy link / -fv
+  - tag: devel
+    cmd:
+      - rustup default stable
+      - rustup completions bash > /usr/share/bash-completion/completions/rustup
+      - runuser -l postgres -c 'initdb -D /var/lib/postgres/data'
+      - usermod -aG docker $USER
