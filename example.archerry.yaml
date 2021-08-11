@@ -72,6 +72,12 @@ git:
         path: ~/.osoy/src/github.com/rasmusmerzin/dwmstatus
 
 fs:
+  - path: /etc/gitconfig
+    write: |
+      [init]
+      defaultBranch = main
+      [pull]
+      rebase = true
   - tag: ui
     fs:
       - path: ~/.xinitrc
