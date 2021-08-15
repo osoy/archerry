@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from enum import Enum
-import procedures
+import scripts
 import yaml
 
 INSTALLER_FLAGS = '-Syu --needed --noconfirm'
@@ -27,7 +27,7 @@ class Installer(str, Enum):
     def to_script(self, pkg_list: list[str]) -> str:
         call = MULTILINE_SEP.join([self.with_flags()] + pkg_list)
         if self == Installer.yay:
-            call = procedures.INSTALL_YAY + '\n' + call
+            call = scripts.INSTALL_YAY + '\n' + call
         return call
 
 class Specification(dict):
