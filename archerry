@@ -1,45 +1,6 @@
 #!/usr/bin/env python
 
-from enum import Enum
-import scripts
-import yaml
+from sys import argv
+from specification import *
 
-INSTALLER_FLAGS = '-Syu --needed --noconfirm'
-MULTILINE_SEP = ' \\\n\t'
-
-def pkg_list_of(spec: dict) -> list[str]:
-    if isinstance(spec, list):
-        res = []
-        for pkg in spec:
-            res.extend(pkg_list_of(pkg))
-        return res
-    elif isinstance(spec, str): return spec.split()
-    elif isinstance(spec, dict): return pkg_list_of(spec['pkg'])
-    else: return []
-
-class Installer(str, Enum):
-    pacman = 'pacman'
-    yay = 'yay'
-
-    def with_flags(self) -> str:
-        return self + INSTALLER_FLAGS
-
-    def to_script(self, pkg_list: list[str]) -> str:
-        call = MULTILINE_SEP.join([self.with_flags()] + pkg_list)
-        if self == Installer.yay:
-            call = scripts.INSTALL_YAY + '\n' + call
-        return call
-
-class Specification(dict):
-    @classmethod
-    def from_file(cls, name: str):
-        with open(name, 'r') as file: return cls(yaml.safe_load(file))
-
-    def installer(self) -> Installer:
-        return (Installer.pacman, Installer.yay) [self['yay'] == True]
-
-    def pkg_script(self) -> str:
-        return self.installer().to_script(pkg_list_of(self))
-
-
-print(Specification.from_file('archerry.yaml').pkg_script())
+print(Specification.from_file(argv[1]).pkg_script())
