@@ -29,9 +29,13 @@ class Specification(dict):
             lambda entry : "echo '%s' > %s" % (entry['write'], entry['path']),
             tag.list_of(self, 'fs')))
 
+    def custom_script(self) -> str:
+        return '\n'.join(tag.list_of(self, 'cmd'))
+
     def to_script(self) -> str:
         return '\n\n\n'.join([
             self.pkg_script(),
             self.git_script(),
             self.fs_script(),
+            self.custom_script(),
         ])
