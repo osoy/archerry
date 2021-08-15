@@ -1,14 +1,13 @@
-#!/bin/python
+#!/usr/bin/env python
 
+from enum import Enum
+import procedures
 import yaml
 
 INSTALLER_FLAGS = '-Syu --needed --noconfirm'
 MULTILINE_SEP = ' \\\n\t'
 
-def installer_of(spec):
-    return ('pacman', 'yay') [spec['yay'] == True]
-
-def pkg_list_of(spec):
+def pkg_list_of(spec: dict) -> list[str]:
     if isinstance(spec, list):
         res = []
         for pkg in spec:
@@ -18,12 +17,29 @@ def pkg_list_of(spec):
     elif isinstance(spec, dict): return pkg_list_of(spec['pkg'])
     else: return []
 
-def pkg_script_of(spec):
-    cmd = installer_of(spec) + ' ' + INSTALLER_FLAGS
-    pkg_list = pkg_list_of(spec)
-    return MULTILINE_SEP.join([cmd] + pkg_list)
+class Installer(str, Enum):
+    pacman = 'pacman'
+    yay = 'yay'
 
-with open('archerry.yaml') as file:
-    spec = yaml.safe_load(file)
+    def with_flags(self) -> str:
+        return self + INSTALLER_FLAGS
 
-print(pkg_script_of(spec))
+    def to_script(self, pkg_list: list[str]) -> str:
+        call = MULTILINE_SEP.join([self.with_flags()] + pkg_list)
+        if self == Installer.yay:
+            call = procedures.INSTALL_YAY + '\n' + call
+        return call
+
+class Specification(dict):
+    @classmethod
+    def from_file(cls, name: str):
+        with open(name, 'r') as file: return cls(yaml.safe_load(file))
+
+    def installer(self) -> Installer:
+        return (Installer.pacman, Installer.yay) [self['yay'] == True]
+
+    def pkg_script(self) -> str:
+        return self.installer().to_script(pkg_list_of(self))
+
+
+print(Specification.from_file('archerry.yaml').pkg_script())
