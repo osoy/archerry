@@ -1,10 +1,8 @@
+from itertools import chain
+
 def list_of(spec: dict, key: str) -> list[any]:
     if isinstance(spec, list):
-        res = []
-        for item in spec: res.extend(list_of(item, key))
-        return res
-    elif isinstance(spec, str): return spec.split()
-    elif isinstance(spec, dict):
-        if spec[key]: return list_of(spec[key], key)
-        else: return [spec]
-    else: return []
+        return list(chain(*map(lambda item : list_of(item, key), spec)))
+    elif isinstance(spec, dict) and spec.get(key):
+        return list_of(spec[key], key)
+    else: return [spec]

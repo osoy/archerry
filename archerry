@@ -3,4 +3,4 @@
 from sys import argv
 from specification import *
 
-print(Specification.from_file(argv[1]).pkg_script())
+print(Specification.from_file(argv[1]).to_script())
