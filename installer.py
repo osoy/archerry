@@ -1,5 +1,5 @@
 from enum import Enum
-import scripts
+import templates
 
 INSTALLER_FLAGS = '-Syu --needed --noconfirm'
 MULTILINE_SEP = ' \\\n\t'
@@ -14,5 +14,5 @@ class Installer(str, Enum):
     def to_script(self, pkg_list: list[str]) -> str:
         call = MULTILINE_SEP.join([self.with_flags()] + pkg_list)
         if self == Installer.yay:
-            call = scripts.INSTALL_YAY + '\n' + call
+            call = templates.INSTALL_YAY + '\n' + call
         return call

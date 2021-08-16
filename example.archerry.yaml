@@ -17,7 +17,7 @@ pkg:
     pkg:
       - postgresql postgresql-libs
       - docker docker-compose
-      - nodejs nvm yarn deno prettier
+      - nodejs nvm yarn prettier
       - jdk-openjdk gradle maven
       - miniserve
       - shellcheck
@@ -124,3 +124,4 @@ cmd:
     cmd:
       - runuser -l postgres -c 'initdb -D /var/lib/postgres/data'
       - usermod -aG docker $USER
+      - yarn global add npm node-gyp degit wscat package-size

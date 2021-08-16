@@ -2,6 +2,7 @@ from itertools import chain
 import yaml
 import tag
 from installer import *
+import templates
 
 class Specification(dict):
     @classmethod
@@ -34,6 +35,7 @@ class Specification(dict):
 
     def to_script(self) -> str:
         return '\n\n\n'.join([
+            templates.SCRIPT_HEAD,
             self.pkg_script(),
             self.git_script(),
             self.fs_script(),
