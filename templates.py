@@ -7,13 +7,23 @@ mkdir -p "$$(dirname $path)"
 printf '$content' > $path
 ''')
 
+WRITEX = Template('''
+mkdir -p "$$(dirname $path)"
+echo "$content" > $path
+''')
+
 PARTED = Template('''
 parted -s $device -- $command
 ''')
 
-LIST_DISKS = '''
-lsblk -bo type,name,size | sed -n 's/^disk \+\([^ ]\+\) \+\([^ ]*\).*$/\\1 \\2/p'
+DISKS = '''
+lsblk -bo type,path,size |
+	sed -n 's/^disk \+\([^ ]\+\) \+\([^ ]*\).*$/\\1 \\2/p'
 '''
+
+BLK_UUID = Template('''
+lsblk -o path,uuid | sed -n 's|^$device \+\(.*\)$$|\\1|p'
+''')
 
 MOUNT = Template('''
 mkdir -p $path
@@ -28,25 +38,25 @@ hwclock --systohc
 RANK_MIRRORS = '''
 pacman -Sy --needed --noconfirm pacman-contrib
 cp /etc/pacman.d/mirrorlist{,.bak}
-rankmirrors /etc/pacman.d/mirrorlist.bak | grep -v '^#' > /etc/pacman.d/mirrorlist
+rankmirrors /etc/pacman.d/mirrorlist.bak |
+	grep -v '^#' > /etc/pacman.d/mirrorlist
 '''
 
 PACSTRAP = Template('''
-pacstrap '$mnt' linux{,-firmware} base{,-devel} grup sudo vi git
+pacstrap /mnt linux{,-firmware} base{,-devel} grup sudo vi git
 ''')
 
 SETUP_BOOTLOADER = Template('''
-echo '$fstab' > /etc/fstab
 pacman -Sy --needed --noconfirm grub
-if [ -e /sys/firmware/efi ]
-then
-	pacman -Sy --needed --noconfirm efibootmgr
-	grub-install --target=x86_64-efi --efi-directory=/boot
-else
-	grub-install --target=i386-pc --boot-directory=/boot $device
-fi
+grub-install --target=i386-pc --boot-directory=/boot $device
 grub-mkconfig -o /boot/grub/grub.cfg
 ''')
+
+SETUP_BOOTLOADER_EFI = '''
+pacman -Sy --needed --noconfirm grub efibootmgr
+grub-install --target=x86_64-efi --efi-directory=/boot
+grub-mkconfig -o /boot/grub/grub.cfg
+'''
 
 INSTALL_NET = Template('''
 pacman -Sy --needed --noconfirm dhcpcd wpa_supplicant

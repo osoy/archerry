@@ -18,7 +18,7 @@ class Specification(dict):
             tag.list_of(self, 'pkg'))))
 
     def pkg_script(self) -> str:
-        return self.installer().to_script(self.pkg_list())
+        return self.installer().script(self.pkg_list())
 
     def git_script(self) -> str:
         return '\n'.join(map(
@@ -35,9 +35,8 @@ class Specification(dict):
     def custom_script(self) -> str:
         return '\n'.join(tag.list_of(self, 'cmd'))
 
-    def to_script(self) -> str:
+    def script(self) -> str:
         return '\n\n\n'.join([
-            templates.SCRIPT_HEAD,
             self.pkg_script(),
             self.git_script(),
             self.fs_script(),

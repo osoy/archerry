@@ -1,14 +1,5 @@
 #!/usr/bin/env python
 
-from sys import argv
-from os import mkdir, path
-from specification import *
-from disk import *
-from templates import *
+from setup import Setup
 
-spec = Specification.from_file(argv[1])
-disk = Disk.from_input()
-
-if not path.isdir('dist'): mkdir('dist')
-with open('dist/disk.sh', 'w') as f: f.write(disk.to_script())
-with open('dist/spec.sh', 'w') as f: f.write(spec.to_script())
+Setup.from_input().write_dist()

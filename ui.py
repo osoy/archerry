@@ -1,4 +1,5 @@
 from typing import Optional
+from os import path
 
 def safe_input(prompt: str, default = '') -> str:
     try: return input(prompt + ': ') or default
@@ -20,3 +21,10 @@ def input_choice(prompt: str, options: set[str]) -> str:
         query = safe_input('%s (%s)' % (prompt, ', '.join(options)))
         matches = [opt for opt in options if query in opt]
         if len(matches) == 1: return matches[0]
+
+def input_file(prompt: str) -> str:
+    while True:
+        val = safe_input(prompt)
+        if not val: continue
+        elif path.isfile(val): return val
+        else: print(f"file '{val}' not found")
