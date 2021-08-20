@@ -2,6 +2,24 @@ from string import Template
 
 SCRIPT_HEAD = '#!/bin/sh'
 
+WRITE = Template('''
+mkdir -p "$$(dirname $path)"
+printf '$content' > $path
+''')
+
+PARTED = Template('''
+parted -s $device -- $command
+''')
+
+LIST_DISKS = '''
+lsblk -bo type,name,size | sed -n 's/^disk \+\([^ ]\+\) \+\([^ ]*\).*$/\\1 \\2/p'
+'''
+
+MOUNT = Template('''
+mkdir -p $path
+mount $device $path
+''')
+
 SETUP_CLOCK = '''
 timedatectl set-ntp true
 hwclock --systohc
@@ -25,7 +43,7 @@ then
 	pacman -Sy --needed --noconfirm efibootmgr
 	grub-install --target=x86_64-efi --efi-directory=/boot
 else
-	grub-install --target=i386-pc --boot-directory=/boot '$dev'
+	grub-install --target=i386-pc --boot-directory=/boot $device
 fi
 grub-mkconfig -o /boot/grub/grub.cfg
 ''')

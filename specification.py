@@ -10,7 +10,7 @@ class Specification(dict):
         with open(name, 'r') as file: return cls(yaml.safe_load(file))
 
     def installer(self) -> Installer:
-        return (Installer.pacman, Installer.yay) [self['yay'] == True]
+        return (Installer.PACMAN, Installer.YAY) [self['yay'] == True]
 
     def pkg_list(self) -> list[str]:
         return list(chain(*map(
@@ -27,7 +27,9 @@ class Specification(dict):
 
     def fs_script(self) -> str:
         return '\n'.join(map(
-            lambda entry : "echo '%s' > %s" % (entry['write'], entry['path']),
+            lambda entry : templates.WRITE.substitute(
+                path = entry['path'],
+                content = entry['write']),
             tag.list_of(self, 'fs')))
 
     def custom_script(self) -> str:

@@ -22,7 +22,7 @@ pkg:
       - miniserve
       - shellcheck
       - go
-  - tag: ui
+  - tag: gui
     pkg:
       - xorg xorg-xinit
       - xf86-input-synaptics
@@ -60,7 +60,7 @@ git:
         path: ~/.osoy/src/github.com/rasmusmerzin/cfg-tmux
       - repo: github.com/rasmusmerzin/cfg-nvim
         path: ~/.osoy/src/github.com/rasmusmerzin/cfg-nvim
-  - tag: ui
+  - tag: gui
     git:
       - repo: github.com/rasmusmerzin/dwm
         path: ~/.osoy/src/github.com/rasmusmerzin/dwm
@@ -78,7 +78,7 @@ fs:
       defaultBranch = main
       [pull]
       rebase = true
-  - tag: ui
+  - tag: gui
     fs:
       - path: ~/.xinitrc
         write: |
