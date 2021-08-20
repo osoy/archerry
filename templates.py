@@ -1,6 +1,6 @@
 from string import Template
 
-SCRIPT_HEAD = '#!/bin/sh'
+SCRIPT_HEAD = '#!/bin/bash'
 
 WRITE = Template('''
 mkdir -p "$$(dirname $path)"
@@ -42,32 +42,32 @@ rankmirrors /etc/pacman.d/mirrorlist.bak |
 	grep -v '^#' > /etc/pacman.d/mirrorlist
 '''
 
-PACSTRAP = Template('''
+PACSTRAP = '''
 pacstrap /mnt linux{,-firmware} base{,-devel} grup sudo vi git
-''')
-
-SETUP_BOOTLOADER = Template('''
-pacman -Sy --needed --noconfirm grub
-grub-install --target=i386-pc --boot-directory=/boot $device
-grub-mkconfig -o /boot/grub/grub.cfg
-''')
-
-SETUP_BOOTLOADER_EFI = '''
-pacman -Sy --needed --noconfirm grub efibootmgr
-grub-install --target=x86_64-efi --efi-directory=/boot
-grub-mkconfig -o /boot/grub/grub.cfg
 '''
-
-INSTALL_NET = Template('''
-pacman -Sy --needed --noconfirm dhcpcd wpa_supplicant
-systemctl enable dhcpcd
-''')
 
 SETUP_PACMAN = '''
 [ $(grep -c '^[multilib]' /etc/pacman.conf) -lt 1 ] &&
 echo '[multilib]
 Include = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
 pacman -Syu
+'''
+
+SETUP_BOOTLOADER = Template('''
+pacman -S --needed --noconfirm grub
+grub-install --target=i386-pc --boot-directory=/boot $device
+grub-mkconfig -o /boot/grub/grub.cfg
+''')
+
+SETUP_BOOTLOADER_EFI = '''
+pacman -S --needed --noconfirm grub efibootmgr
+grub-install --target=x86_64-efi --efi-directory=/boot
+grub-mkconfig -o /boot/grub/grub.cfg
+'''
+
+INSTALL_NET = '''
+pacman -S --needed --noconfirm dhcpcd wpa_supplicant
+systemctl enable dhcpcd
 '''
 
 SETUP_HOST = Template('''

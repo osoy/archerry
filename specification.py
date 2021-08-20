@@ -35,7 +35,7 @@ class Specification(dict):
     def custom_script(self) -> str:
         return '\n'.join(tag.list_of(self, 'cmd'))
 
-    def script(self) -> str:
+    def user_script(self) -> str:
         return '\n\n\n'.join([
             self.pkg_script(),
             self.git_script(),
