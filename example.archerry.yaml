@@ -9,10 +9,10 @@ pkg:
   - rustup
   - tag: net
     pkg:
-      - curl openssh
+      - dhcpcd
       - transmission-cli
       - tor torsocks
-      - wireless_tools
+      - wpa_supplicant wireless_tools
   - tag: devel
     pkg:
       - postgresql postgresql-libs
@@ -114,12 +114,16 @@ fs:
 
 cmd:
   - rustup default stable
-  - sudo rustup completions bash > /usr/share/bash-completion/completions/rustup
+  - |
+    rustup completions bash |
+    sudo tee /usr/share/bash-completion/completions/rustup
   - |
     cd ~/.osoy/src/gitlab.com/osoy/osoy
     make
     ./osoy execute / make
     ./osoy link / -fv
+  - tag: net
+    cmd: systemctl enable dhcpcd
   - tag: devel
     cmd:
       - sudo runuser -l postgres -c 'initdb -D /var/lib/postgres/data'

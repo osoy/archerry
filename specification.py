@@ -3,6 +3,7 @@ import yaml
 import tag
 from installer import Installer
 from ui import input_file
+from utils import repo_url, base_dir, write_script, cat
 import templates
 
 class Specification(dict):
@@ -15,7 +16,7 @@ class Specification(dict):
         return Specification.from_file(input_file('config file'))
 
     def installer(self) -> Installer:
-        return (Installer.PACMAN, Installer.YAY) [self['yay'] == True]
+        return (Installer.PACMAN, Installer.YAY) [self.get('yay') == True]
 
     def pkg_list(self) -> list[str]:
         return list(chain(*map(
@@ -26,24 +27,24 @@ class Specification(dict):
         return self.installer().script(self.pkg_list())
 
     def git_script(self) -> str:
-        return '\n'.join(map(
-            lambda entry : 'git clone %s %s' % (entry['repo'], entry['path']),
+        return cat(map(
+            lambda entry : 'git clone %s %s' % (
+                repo_url(entry['repo']),
+                entry.get('path') or ''),
             tag.list_of(self, 'git')))
 
     def fs_script(self) -> str:
-        return '\n'.join(map(
-            lambda entry : templates.WRITE.substitute(
-                path=entry['path'],
-                content=entry['write']),
+        return cat(map(
+            lambda entry : write_script(entry['write'], entry['path']),
             tag.list_of(self, 'fs')))
 
     def custom_script(self) -> str:
-        return '\n'.join(tag.list_of(self, 'cmd'))
+        return cat(tag.list_of(self, 'cmd'))
 
-    def user_script(self) -> str:
-        return '\n\n\n'.join([
+    def script(self) -> str:
+        return cat([
             self.pkg_script(),
             self.git_script(),
             self.fs_script(),
             self.custom_script(),
-        ])
+        ], 2)

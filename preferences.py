@@ -1,5 +1,6 @@
 from subprocess import run, PIPE
 from ui import input_word, input_secret, input_choice
+from utils import cat
 import templates
 
 def timezones() -> list[str]:
@@ -22,10 +23,10 @@ class Preferences:
         return preferences
 
     def script(self):
-        return '\n\n\n'.join([
+        return cat([
             templates.SETUP_HOST.substitute(hostname=self.hostname),
             templates.SETUP_TIMEZONE.substitute(timezone=self.timezone),
             templates.SETUP_USER.substitute(
                 name=self.username,
                 password=self.password),
-        ])
+        ], 2)

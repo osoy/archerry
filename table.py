@@ -1,6 +1,7 @@
 from enum import Enum
 from partition import Partition
 import templates
+from utils import cat
 
 class TableKind(str, Enum):
     GPT = 'gpt'
@@ -20,41 +21,42 @@ class Table:
         self.partitions = partitions
 
     def partition_script(self, device: str) -> str:
-        result = self.kind.script(device)
+        cmds = [self.kind.script(device)]
         pointer = 1
         for partition in self.partitions:
-            result += partition.script(device, pointer)
+            cmds.append(partition.script(device, pointer))
             if partition.size_mb: pointer += partition.size_mb
             else: break
-        return result
+        return cat(cmds)
 
     def format_script(self, device: str) -> str:
-        result = ''
+        cmds = []
         for i, partition in enumerate(self.partitions):
-            result += partition.kind.format_script(
-                Partition.device(device, i + 1))
-        return result
+            cmds.append(partition.kind.format_script(
+                Partition.device(device, i + 1)))
+        return cat(cmds)
 
     def mount_script(self, device: str) -> str:
-        result = ''
+        cmds = []
         for i, partition in enumerate(self.partitions):
-            result += partition.kind.mount_script(
-                Partition.device(device, i + 1))
-        return result
+            cmds.append(partition.kind.mount_script(
+                Partition.device(device, i + 1)))
+        return cat(cmds)
 
     def fstab_script(self, device: str) -> str:
         entries = []
         for i, partition in enumerate(self.partitions):
             entries.append(partition.kind.fstab_entry_script(
                 Partition.device(device, i + 1)))
-        return templates.WRITEX.substitute(
-            path='/mnt/etc/fstab',
-            content='\n'.join(entries))
+        return cat([
+            'mkdir -p /mnt/etc',
+            f'echo "{cat(entries)}" > /mnt/etc/fstab',
+        ])
 
     def script(self, device: str) -> str:
-        return '\n\n\n'.join([
+        return cat([
             self.partition_script(device),
             self.format_script(device),
             self.mount_script(device),
             self.fstab_script(device),
-        ])
+        ], 2)

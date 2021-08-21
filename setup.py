@@ -2,6 +2,7 @@ from os import path, mkdir
 from disk import DiskSetup
 from specification import Specification
 from preferences import Preferences
+from utils import cat
 import templates
 
 class Setup:
@@ -18,35 +19,35 @@ class Setup:
         return setup
 
     def iso_script(self):
-        return '\n\n\n'.join([
+        return cat([
             templates.SCRIPT_HEAD,
+            templates.CWD,
             self.disk.table_script(),
             templates.SETUP_CLOCK,
             templates.RANK_MIRRORS,
             templates.PACSTRAP,
+            templates.SETUP_SUDO,
             templates.CHROOT.substitute(file='root.sh'),
-            templates.BIND_SUDO,
             templates.CHROOT_USER.substitute(
                 file='user.sh',
                 user=self.pref.username),
-        ])
+        ], 2)
 
     def root_script(self):
-        return '\n\n\n'.join([
+        return cat([
             templates.SCRIPT_HEAD,
             templates.SETUP_CLOCK,
             templates.SETUP_LOCALE,
             templates.SETUP_PACMAN,
             self.pref.script(),
             self.disk.bootloader_script(),
-            templates.INSTALL_NET,
-        ])
+        ], 2)
 
     def user_script(self):
-        return '\n\n\n'.join([
+        return cat([
             templates.SCRIPT_HEAD,
-            self.spec.user_script(),
-        ])
+            self.spec.script(),
+        ], 2)
 
     def write_dist(self, dist_dir = 'dist'):
         if not path.isdir(dist_dir): mkdir(dist_dir)
