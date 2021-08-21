@@ -1,25 +1,20 @@
 from os import path, mkdir
 from disk import DiskSetup
 from specification import Specification
-from ui import input_file, input_secret, input_word
+from preferences import Preferences
 import templates
 
 class Setup:
     disk: DiskSetup
     spec: Specification
-    hostname: str
-    username: str
-    password: str
+    pref: Preferences
 
     @classmethod
     def from_input(cls):
         setup = Setup()
-        spec_path = input_file('config file')
-        setup.spec = Specification.from_file(spec_path)
+        setup.spec = Specification.from_input()
         setup.disk = DiskSetup.from_input()
-        setup.hostname = input_word('hostname')
-        setup.username = input_word('username')
-        setup.password = input_secret('password')
+        setup.pref = Preferences.from_input()
         return setup
 
     def iso_script(self):
@@ -33,21 +28,18 @@ class Setup:
             templates.BIND_SUDO,
             templates.CHROOT_USER.substitute(
                 file='user.sh',
-                user=self.username),
+                user=self.pref.username),
         ])
 
     def root_script(self):
         return '\n\n\n'.join([
             templates.SCRIPT_HEAD,
             templates.SETUP_CLOCK,
-            templates.SETUP_HOST.substitute(hostname=self.hostname),
             templates.SETUP_LOCALE,
             templates.SETUP_PACMAN,
+            self.pref.script(),
             self.disk.bootloader_script(),
             templates.INSTALL_NET,
-            templates.SETUP_USER.substitute(
-                name=self.username,
-                password=self.password),
         ])
 
     def user_script(self):

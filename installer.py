@@ -5,7 +5,7 @@ INSTALLER_FLAGS = '-Syu --needed --noconfirm'
 MULTILINE_SEP = ' \\\n\t'
 
 class Installer(str, Enum):
-    PACMAN = 'pacman'
+    PACMAN = 'sudo pacman'
     YAY = 'yay'
 
     def with_flags(self) -> str:

@@ -33,17 +33,27 @@ mount $device $path
 CHROOT = Template('''
 cp $file /mnt
 arch-chroot /mnt bash $file
+rm -f /mnt/$file
 ''')
 
 CHROOT_USER = Template('''
 cp $file /mnt
 arch-chroot /mnt runuser -l $user -c 'bash $file'
+rm -f /mnt/$file
 ''')
 
 SETUP_CLOCK = '''
 timedatectl set-ntp true
 hwclock --systohc
 '''
+
+TIMEZONES = '''
+timedatectl list-timezones
+'''
+
+SETUP_TIMEZONE = Template('''
+timedatectl set-timezone $timezone
+''')
 
 RANK_MIRRORS = '''
 pacman -Sy --needed --noconfirm pacman-contrib
@@ -85,10 +95,6 @@ echo '127.0.0.1 localhost
 ::1 localhost
 127.0.1.1 $hostname.localdomain $hostname' > /etc/hosts
 echo '$hostname' > /etc/hostname
-''')
-
-SETUP_TIMEZONE = Template('''
-ln -sf '$path' /etc/localtime
 ''')
 
 SETUP_LOCALE = '''

@@ -11,7 +11,7 @@ def efi_exists() -> bool:
     return exists('/sys/firmware/efi')
 
 def available_disks() -> list[[str, int]]:
-    proc = run(['bash', '-c', templates.DISKS], stdout = PIPE)
+    proc = run(['bash', '-c', templates.DISKS], stdout=PIPE)
     disks = []
     for line in proc.stdout.decode('utf-8').split('\n')[0:-1]:
         path, size = line.split(' ')
@@ -26,7 +26,7 @@ def input_disk_device() -> str:
     if len(disks) < 1: raise Exception('No disks found')
     str_of_disk = lambda disk : '- %s (%sMiB)' % \
         (disk[0], int(disk[1] / 1024 / 1024))
-    print('\n'.join(map(str_of_disk, disks)))
+    print('\n'.join(['available disks:'] + list(map(str_of_disk, disks))))
     disk_paths = set(map(lambda disk : disk[0], disks))
     chosen = input_choice('device', disk_paths)
     return chosen
@@ -36,17 +36,13 @@ class DiskSetup:
     efi_size_mb: int
     swap_size_mb: int
 
-    def __init__(self, dev: str, efi: int, swap: int):
-        self.device = dev
-        self.efi_size_mb = efi
-        self.swap_size_mb = swap
-
     @classmethod
     def from_input(cls):
-        device = input_disk_device()
-        efi_size = (0, 512) [efi_exists()]
-        swap_size = input_natural('optional swap size (MiB)')
-        return DiskSetup(device, efi_size, swap_size)
+        disk_setup = DiskSetup()
+        disk_setup.device = input_disk_device()
+        disk_setup.efi_size_mb = (0, 512) [efi_exists()]
+        disk_setup.swap_size_mb = input_natural('swap size in MiB (optional)')
+        return disk_setup
 
     def table(self) -> Table:
         kind = TableKind.MBR

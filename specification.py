@@ -1,13 +1,18 @@
 from itertools import chain
 import yaml
 import tag
-from installer import *
+from installer import Installer
+from ui import input_file
 import templates
 
 class Specification(dict):
     @classmethod
     def from_file(cls, name: str):
         with open(name, 'r') as file: return cls(yaml.safe_load(file))
+
+    @classmethod
+    def from_input(cls):
+        return Specification.from_file(input_file('config file'))
 
     def installer(self) -> Installer:
         return (Installer.PACMAN, Installer.YAY) [self['yay'] == True]

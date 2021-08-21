@@ -3,7 +3,8 @@ from os import path
 from getpass import getpass
 
 def safe_input(prompt: str, default='') -> str:
-    try: return input(f'{prompt}: ') or default
+    if prompt[-1] != ' ': prompt += ': '
+    try: return input(prompt) or default
     except KeyboardInterrupt: exit(1)
     except: return default
 
@@ -23,14 +24,14 @@ def input_natural(prompt: str, default=0) -> int:
         val = input_int(prompt, default)
         if val >= 0: return val
 
-def input_choice(prompt: str, options: set[str], show=True) -> str:
-    if show: prompt += f' (%s)' % ', '.join(options)
+def input_choice(prompt: str, options: set[str]) -> str:
     while True:
         query = safe_input(prompt)
-        matches = [opt for opt in options if query in opt]
+        if query in options: return query
+        matches = [opt for opt in options if query.lower() in opt.lower()]
         if len(matches) == 1: return matches[0]
         elif len(matches) == 0: print('no matches')
-        elif query: print('no matches')
+        elif query: print('multiple matches')
 
 def input_file(prompt: str) -> str:
     while True:
