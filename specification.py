@@ -13,7 +13,7 @@ class Specification(dict):
 
     @classmethod
     def from_input(cls):
-        return Specification.from_file(input_file('config file'))
+        return Specification.from_file(input_file('Config file'))
 
     def installer(self) -> Installer:
         return (Installer.PACMAN, Installer.YAY) [self.get('yay') == True]

@@ -1,19 +1,18 @@
 from enum import Enum
 from typing import Optional
 from os.path import exists
-from subprocess import run, PIPE
 from table import Table, TableKind
 from partition import Partition
 from ui import input_choice, input_natural
+from utils import bash_out, bash_lines, prefix_bin
 import templates
 
 def efi_exists() -> bool:
     return exists('/sys/firmware/efi')
 
 def available_disks() -> list[[str, int]]:
-    proc = run(['bash', '-c', templates.DISKS], stdout=PIPE)
     disks = []
-    for line in proc.stdout.decode('utf-8').split('\n')[0:-1]:
+    for line in bash_lines(templates.DISKS):
         path, size = line.split(' ')
         try:
             size = int(size)
@@ -24,12 +23,15 @@ def available_disks() -> list[[str, int]]:
 def input_disk_device() -> str:
     disks = available_disks()
     if len(disks) < 1: raise Exception('No disks found')
-    str_of_disk = lambda disk : '- %s (%sMiB)' % \
-        (disk[0], int(disk[1] / 1024 / 1024))
-    print('\n'.join(['available disks:'] + list(map(str_of_disk, disks))))
+    str_of_disk = lambda disk : '- %s (%s)' % (disk[0], prefix_bin(disk[1]))
+    print('\n'.join(['Available disks:'] + list(map(str_of_disk, disks))))
     disk_paths = set(map(lambda disk : disk[0], disks))
-    chosen = input_choice('device', disk_paths)
+    chosen = input_choice('Device', disk_paths)
     return chosen
+
+def input_swap_size_mb() -> int:
+    print('Detected memory ' + prefix_bin(int(bash_out(templates.MEMORY))))
+    return input_natural('Swap size in MiB (optional)')
 
 class DiskSetup:
     device: str
@@ -41,7 +43,7 @@ class DiskSetup:
         disk_setup = DiskSetup()
         disk_setup.device = input_disk_device()
         disk_setup.efi_size_mb = (0, 512) [efi_exists()]
-        disk_setup.swap_size_mb = input_natural('swap size in MiB (optional)')
+        disk_setup.swap_size_mb = input_swap_size_mb()
         return disk_setup
 
     def table(self) -> Table:

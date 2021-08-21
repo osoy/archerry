@@ -7,15 +7,15 @@ import templates
 
 class Setup:
     disk: DiskSetup
-    spec: Specification
     pref: Preferences
+    spec: Specification
 
     @classmethod
     def from_input(cls):
         setup = Setup()
-        setup.spec = Specification.from_input()
         setup.disk = DiskSetup.from_input()
         setup.pref = Preferences.from_input()
+        setup.spec = Specification.from_input()
         return setup
 
     def iso_script(self):
@@ -51,6 +51,9 @@ class Setup:
 
     def write_dist(self, dist_dir = 'dist'):
         if not path.isdir(dist_dir): mkdir(dist_dir)
-        with open(f'{dist_dir}/iso.sh', 'w') as f: f.write(self.iso_script())
-        with open(f'{dist_dir}/root.sh', 'w') as f: f.write(self.root_script())
-        with open(f'{dist_dir}/user.sh', 'w') as f: f.write(self.user_script())
+        with open(f'{dist_dir}/iso.sh', 'w') as file:
+            file.write(self.iso_script())
+        with open(f'{dist_dir}/root.sh', 'w') as file:
+            file.write(self.root_script())
+        with open(f'{dist_dir}/user.sh', 'w') as file:
+            file.write(self.user_script())

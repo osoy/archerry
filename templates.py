@@ -15,6 +15,10 @@ lsblk -bo type,path,size |
 	sed -n 's/^disk \+\([^ ]\+\) \+\([^ ]*\).*$/\\1 \\2/p'
 '''
 
+MEMORY = '''
+free -b | sed -n 's/^Mem: *\([^ ]\+\) .*$/\\1/p'
+'''
+
 BLK_UUID = Template('''
 lsblk -o path,uuid | sed -n 's|^$device \+\(.*\)$$|\\1|p'
 ''')

@@ -1,11 +1,10 @@
 from subprocess import run, PIPE
 from ui import input_word, input_secret, input_choice
-from utils import cat
+from utils import cat, bash_lines
 import templates
 
 def timezones() -> list[str]:
-    proc = run(['bash', '-c', templates.TIMEZONES], stdout=PIPE)
-    return proc.stdout.decode('utf-8').split('\n')[0:-1]
+    return bash_lines(templates.TIMEZONES)
 
 class Preferences:
     hostname: str
@@ -16,10 +15,10 @@ class Preferences:
     @classmethod
     def from_input(cls):
         preferences = Preferences()
-        preferences.hostname = input_word('hostname')
-        preferences.username = input_word('username')
-        preferences.password = input_secret('password')
-        preferences.timezone = input_choice('timezone', timezones())
+        preferences.hostname = input_word('Hostname')
+        preferences.username = input_word('Username')
+        preferences.password = input_secret('Password')
+        preferences.timezone = input_choice('Timezone', timezones())
         return preferences
 
     def script(self):
