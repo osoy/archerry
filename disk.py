@@ -4,7 +4,7 @@ from os.path import exists
 from table import Table, TableKind
 from partition import Partition
 from ui import input_choice, input_natural
-from utils import bash_out, bash_lines, prefix_bin
+from utils import bash_pipe, bash_lines, prefix_bin
 import templates
 
 def efi_exists() -> bool:
@@ -30,7 +30,7 @@ def input_disk_device() -> str:
     return chosen
 
 def input_swap_size_mb() -> int:
-    print('Detected memory ' + prefix_bin(int(bash_out(templates.MEMORY))))
+    print('Detected memory ' + prefix_bin(int(bash_pipe(templates.MEMORY))))
     return input_natural('Swap size in MiB (optional)')
 
 class DiskSetup:

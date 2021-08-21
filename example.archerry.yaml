@@ -35,7 +35,6 @@ pkg:
       - ttf-material-design-icons
       - adobe-source-han-sans-otc-fonts
       - adobe-source-han-serif-otc-fonts
-      - libxft-bgra ttf-twemoji
       - materia-gtk-theme
       - pavucontrol
   - tag: media

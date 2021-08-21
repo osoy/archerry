@@ -2,6 +2,10 @@ from string import Template
 
 SCRIPT_HEAD = '#!/bin/bash'
 
+TS = Template('''
+printf '\n[%s] $msg\n\n' "$$(date +%FT%T)"
+''')
+
 CWD = '''
 cd "$(dirname "$(readlink -f "$0")")"
 '''
@@ -76,13 +80,13 @@ pacman -Syu
 '''
 
 SETUP_BOOTLOADER = Template('''
-pacman -S --needed --noconfirm grub
+pacman -Sy --needed --noconfirm grub
 grub-install --target=i386-pc --boot-directory=/boot $device
 grub-mkconfig -o /boot/grub/grub.cfg
 ''')
 
 SETUP_BOOTLOADER_EFI = '''
-pacman -S --needed --noconfirm grub efibootmgr
+pacman -Sy --needed --noconfirm grub efibootmgr
 grub-install --target=x86_64-efi --efi-directory=/boot
 grub-mkconfig -o /boot/grub/grub.cfg
 '''

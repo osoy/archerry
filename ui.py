@@ -10,11 +10,19 @@ def safe_input(prompt: str, default='') -> str:
         print()
         return default
 
+def input_bool(prompt: str) -> bool:
+    if prompt[-1] != ' ': prompt += '? '
+    while True:
+        val = safe_input(prompt)
+        if not val: continue
+        if val.upper() in ['Y', 'YES']: return True
+        if val.upper() in ['N', 'NO']: return False
+
 def input_word(prompt: str, default=0) -> int:
     while True:
         val = safe_input(prompt, default)
         if not val: continue
-        return val.replace(' ', '_')
+        return val.strip().replace(' ', '_')
 
 def input_int(prompt: str, default=0) -> int:
     while True:

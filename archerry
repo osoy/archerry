@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+from subprocess import run
 from setup import Setup
+from ui import input_bool
 
-Setup.from_input().write_dist()
+Setup.from_input().write_dist('dist')
+if input_bool('Run'):
+    run('bash dist/main.bash | tee archerry.log', shell=True)

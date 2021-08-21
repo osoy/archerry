@@ -20,14 +20,11 @@ def cat(entries: list[str], level = 1) -> str:
     elif level == 2: sep = '\n\n\n'
     return sep.join(map(lambda e : e.strip(), entries))
 
-def bash(cmd: str) -> CompletedProcess:
-    return run(['bash', '-c', cmd], stdout=PIPE)
-
-def bash_out(cmd: str) -> str:
-    return bash(cmd).stdout.decode('utf-8')
+def bash_pipe(cmd: str) -> str:
+    return run(['bash', '-c', cmd], stdout=PIPE).stdout.decode('utf-8')
 
 def bash_lines(cmd: str) -> list[str]:
-    return bash_out(cmd).strip().split('\n')
+    return bash_pipe(cmd).strip().split('\n')
 
 BIN_PREFIX = ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi']
 

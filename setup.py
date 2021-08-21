@@ -3,7 +3,7 @@ from disk import DiskSetup
 from specification import Specification
 from preferences import Preferences
 from utils import cat
-import templates
+from templates import *
 
 class Setup:
     disk: DiskSetup
@@ -20,40 +20,46 @@ class Setup:
 
     def iso_script(self):
         return cat([
-            templates.SCRIPT_HEAD,
-            templates.CWD,
+            SCRIPT_HEAD,
+            CWD,
+            TS.substitute(msg='Disk setup'),
             self.disk.table_script(),
-            templates.SETUP_CLOCK,
-            templates.RANK_MIRRORS,
-            templates.PACSTRAP,
-            templates.SETUP_SUDO,
-            templates.CHROOT.substitute(file='root.sh'),
-            templates.CHROOT_USER.substitute(
-                file='user.sh',
+            TS.substitute(msg='Rank mirrors'),
+            SETUP_CLOCK,
+            RANK_MIRRORS,
+            TS.substitute(msg='Pacstrap'),
+            PACSTRAP,
+            SETUP_SUDO,
+            TS.substitute(msg='Chroot'),
+            CHROOT.substitute(file='root.bash'),
+            CHROOT_USER.substitute(
+                file='user.bash',
                 user=self.pref.username),
         ], 2)
 
     def root_script(self):
         return cat([
-            templates.SCRIPT_HEAD,
-            templates.SETUP_CLOCK,
-            templates.SETUP_LOCALE,
-            templates.SETUP_PACMAN,
+            SCRIPT_HEAD,
+            SETUP_CLOCK,
+            SETUP_LOCALE,
+            SETUP_PACMAN,
             self.pref.script(),
+            TS.substitute(msg='Bootloader'),
             self.disk.bootloader_script(),
         ], 2)
 
     def user_script(self):
         return cat([
-            templates.SCRIPT_HEAD,
+            SCRIPT_HEAD,
+            TS.substitute(msg='Specification'),
             self.spec.script(),
         ], 2)
 
-    def write_dist(self, dist_dir = 'dist'):
+    def write_dist(self, dist_dir='.'):
         if not path.isdir(dist_dir): mkdir(dist_dir)
-        with open(f'{dist_dir}/iso.sh', 'w') as file:
+        with open(f'{dist_dir}/main.bash', 'w') as file:
             file.write(self.iso_script())
-        with open(f'{dist_dir}/root.sh', 'w') as file:
+        with open(f'{dist_dir}/root.bash', 'w') as file:
             file.write(self.root_script())
-        with open(f'{dist_dir}/user.sh', 'w') as file:
+        with open(f'{dist_dir}/user.bash', 'w') as file:
             file.write(self.user_script())
