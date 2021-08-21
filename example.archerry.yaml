@@ -114,7 +114,7 @@ fs:
 
 cmd:
   - rustup default stable
-  - rustup completions bash > /usr/share/bash-completion/completions/rustup
+  - sudo rustup completions bash > /usr/share/bash-completion/completions/rustup
   - |
     cd ~/.osoy/src/gitlab.com/osoy/osoy
     make
@@ -122,6 +122,6 @@ cmd:
     ./osoy link / -fv
   - tag: devel
     cmd:
-      - runuser -l postgres -c 'initdb -D /var/lib/postgres/data'
-      - usermod -aG docker $USER
+      - sudo runuser -l postgres -c 'initdb -D /var/lib/postgres/data'
+      - sudo usermod -aG docker $USER
       - yarn global add npm node-gyp degit wscat package-size

@@ -27,7 +27,7 @@ class PartitionKind(str, Enum):
 
     def fstab_entry_script(self, device: str) -> str:
         return 'UUID=$(%s) %s' % (
-            templates.BLK_UUID.substitute(device = device),
+            templates.BLK_UUID.substitute(device=device),
             self.fstab_options())
 
 class Partition:
@@ -60,5 +60,5 @@ class Partition:
 
     def script(self, device: str, start: int) -> str:
         return templates.PARTED.substitute(
-            device = device,
-            command = f'mkpart {self.kind} {start}MiB {self.size()}')
+            device=device,
+            command=f'mkpart {self.kind} {start}MiB {self.size()}')

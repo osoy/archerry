@@ -8,9 +8,8 @@ class Setup:
     disk: DiskSetup
     spec: Specification
     hostname: str
-    rootpass: str
-    user: str
-    userpass: str
+    username: str
+    password: str
 
     @classmethod
     def from_input(cls):
@@ -19,9 +18,8 @@ class Setup:
         setup.spec = Specification.from_file(spec_path)
         setup.disk = DiskSetup.from_input()
         setup.hostname = input_word('hostname')
-        setup.rootpass = input_secret('root password')
-        setup.user = input_word('user')
-        setup.userpass = input_secret('user password')
+        setup.username = input_word('username')
+        setup.password = input_secret('password')
         return setup
 
     def iso_script(self):
@@ -31,21 +29,25 @@ class Setup:
             templates.SETUP_CLOCK,
             templates.RANK_MIRRORS,
             templates.PACSTRAP,
+            templates.CHROOT.substitute(file='root.sh'),
+            templates.BIND_SUDO,
+            templates.CHROOT_USER.substitute(
+                file='user.sh',
+                user=self.username),
         ])
 
     def root_script(self):
         return '\n\n\n'.join([
             templates.SCRIPT_HEAD,
             templates.SETUP_CLOCK,
-            templates.SETUP_HOST.substitute(hostname = self.hostname),
+            templates.SETUP_HOST.substitute(hostname=self.hostname),
             templates.SETUP_LOCALE,
             templates.SETUP_PACMAN,
             self.disk.bootloader_script(),
             templates.INSTALL_NET,
-            templates.SETUP_ROOT.substitute(password = self.rootpass),
             templates.SETUP_USER.substitute(
-                name = self.user,
-                password = self.userpass),
+                name=self.username,
+                password=self.password),
         ])
 
     def user_script(self):

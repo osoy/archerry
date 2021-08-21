@@ -28,8 +28,8 @@ class Specification(dict):
     def fs_script(self) -> str:
         return '\n'.join(map(
             lambda entry : templates.WRITE.substitute(
-                path = entry['path'],
-                content = entry['write']),
+                path=entry['path'],
+                content=entry['write']),
             tag.list_of(self, 'fs')))
 
     def custom_script(self) -> str:

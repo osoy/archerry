@@ -8,8 +8,8 @@ class TableKind(str, Enum):
 
     def script(self, device: str):
         return templates.PARTED.substitute(
-            device = device,
-            command = 'mklabel ' + self)
+            device=device,
+            command=f'mklabel {self}')
 
 class Table:
     kind: TableKind
@@ -48,8 +48,8 @@ class Table:
             entries.append(partition.kind.fstab_entry_script(
                 Partition.device(device, i + 1)))
         return templates.WRITEX.substitute(
-            path = '/mnt/etc/fstab',
-            content = '\n'.join(entries))
+            path='/mnt/etc/fstab',
+            content='\n'.join(entries))
 
     def script(self, device: str) -> str:
         return '\n\n\n'.join([

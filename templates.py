@@ -30,6 +30,16 @@ mkdir -p $path
 mount $device $path
 ''')
 
+CHROOT = Template('''
+cp $file /mnt
+arch-chroot /mnt bash $file
+''')
+
+CHROOT_USER = Template('''
+cp $file /mnt
+arch-chroot /mnt runuser -l $user -c 'bash $file'
+''')
+
 SETUP_CLOCK = '''
 timedatectl set-ntp true
 hwclock --systohc
@@ -82,20 +92,16 @@ ln -sf '$path' /etc/localtime
 ''')
 
 SETUP_LOCALE = '''
+echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
 locale-gen
-echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 '''
 
-BIND_SUDO = Template('''
+BIND_SUDO = '''
+usermod -aG wheel root
 echo '%wheel ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers
 trap "echo '%wheel ALL=(ALL) ALL' > /etc/sudoers" EXIT
-''')
-
-SETUP_ROOT = Template('''
-echo 'root:$password' | chpasswd
-usermod -aG wheel root
-''')
+'''
 
 SETUP_USER = Template('''
 useradd -m $name
