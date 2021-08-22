@@ -9,8 +9,8 @@ def base_dir(path: str) -> str:
 
 def write_script(content: str, path: str) -> str:
     prefix = ('', 'sudo ') [path[0] == '/']
-    mkdir_script = prefix + 'mkdir -p ' + base_dir(path)
-    print_script = prefix + f"printf '{content}' > {path}"
+    mkdir_script = f'{prefix}mkdir -p {base_dir(path)}'
+    print_script = f"printf '{content}' | {prefix}tee {path} >/dev/null"
     return '\n'.join([mkdir_script, print_script])
 
 def concat(entries: list[str], level = 1) -> str:
