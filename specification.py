@@ -40,10 +40,13 @@ class Specification(dict):
                 entry.get('path') or ''),
             tag.list_of(self, 'git')))
 
+    def writes(self) -> list[dict]:
+        return tag.list_of(self, 'fs')
+
     def fs_script(self) -> str:
         return cat(map(
             lambda entry : write_script(entry['write'], entry['path']),
-            tag.list_of(self, 'fs')))
+            self.writes()))
 
     def custom_script(self) -> str:
         return cat(tag.list_of(self, 'cmd'))
@@ -56,5 +59,26 @@ class Specification(dict):
             self.custom_script(),
         ], 2)
 
-    def check(self) -> str:
+    def check_pkg(self):
         self.installer().check(self.pkg_list())
+
+    def check_fs(self):
+        missing_count = 0
+        diff_count = 0
+        entries = self.writes()
+        for entry in entries:
+            try:
+                with open(entry['path'], 'r') as file:
+                    content = file.read()
+                    if content.strip() != entry['write'].strip():
+                        print('Diff: %s' % entry['path'])
+                        diff_count += 1
+            except:
+                print('Missing: %s' % entry['path'])
+                missing_count += 1
+        print('Total %i, Missing %i, Diff %i' % \
+            (len(entries), missing_count, diff_count))
+
+    def check(self) -> str:
+        self.check_fs()
+        self.check_pkg()

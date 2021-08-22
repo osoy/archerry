@@ -3,8 +3,6 @@ from subprocess import run, DEVNULL
 from utils import cat
 import templates
 
-INSTALLER_FLAGS = ''
-
 class Installer(str, Enum):
     PACMAN = 'sudo pacman'
     YAY = 'yay'
@@ -24,6 +22,6 @@ class Installer(str, Enum):
             proc = run(['pacman', '-Q', pkg], stdout=DEVNULL, stderr=DEVNULL)
             if proc.returncode < 0: exit(1)
             elif proc.returncode > 0:
-                print(f'missing: {pkg}')
+                print(f'Missing: {pkg}')
                 missing_count += 1
-        print(f'total {len(pkg_list)}, missing {missing_count}')
+        print(f'Total {len(pkg_list)}, Missing {missing_count}')
