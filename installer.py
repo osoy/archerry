@@ -1,6 +1,6 @@
 from enum import Enum
 from subprocess import run, DEVNULL
-from utils import cat
+from utils import concat
 import templates
 
 class Installer(str, Enum):
@@ -11,8 +11,8 @@ class Installer(str, Enum):
         return f'{self} -Syu --needed --noconfirm'
 
     def script(self, pkg_list: list[str]) -> str:
-        call = cat([self.with_flags()] + pkg_list, 0)
-        if self == Installer.YAY: call = cat([templates.INSTALL_YAY, call], 2)
+        call = concat([self.with_flags()] + pkg_list, 0)
+        if self == Installer.YAY: call = concat([templates.INSTALL_YAY, call], 2)
         return call
 
     def check(self, pkg_list: list[str]):

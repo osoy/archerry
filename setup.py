@@ -2,7 +2,7 @@ from os import path, mkdir
 from disk import DiskSetup
 from specification import Specification
 from preferences import Preferences
-from utils import cat
+from utils import concat
 from templates import *
 
 class Setup:
@@ -19,7 +19,7 @@ class Setup:
         return setup
 
     def iso_script(self):
-        return cat([
+        return concat([
             SCRIPT_HEAD,
             CWD,
             TS.substitute(msg='Disk setup'),
@@ -38,7 +38,7 @@ class Setup:
         ], 2)
 
     def root_script(self):
-        return cat([
+        return concat([
             SCRIPT_HEAD,
             SETUP_CLOCK,
             SETUP_LOCALE,
@@ -49,7 +49,7 @@ class Setup:
         ], 2)
 
     def user_script(self):
-        return cat([
+        return concat([
             SCRIPT_HEAD,
             TS.substitute(msg='Specification'),
             self.spec.script(),

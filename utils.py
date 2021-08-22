@@ -1,4 +1,4 @@
-from subprocess import run, PIPE, CompletedProcess
+from subprocess import run, PIPE, DEVNULL, CompletedProcess
 from math import log
 
 def repo_url(val: str) -> str:
@@ -14,14 +14,18 @@ def write_script(content: str, path: str) -> str:
     print_script = prefix + f"printf '{content}' > {path}"
     return '\n'.join([mkdir_script, print_script])
 
-def cat(entries: list[str], level = 1) -> str:
+def concat(entries: list[str], level = 1) -> str:
     sep = '\n'
     if level == 0: sep = ' \\\n\t'
     elif level == 2: sep = '\n\n\n'
-    return sep.join(map(lambda e : e.strip(), entries))
+    return sep.join([e.strip() for e in entries])
 
 def bash_pipe(cmd: str) -> str:
-    return run(['bash', '-c', cmd], stdout=PIPE).stdout.decode('utf-8')
+    return run(
+        ['bash', '-c', cmd],
+        stdout=PIPE,
+        stderr=DEVNULL,
+    ).stdout.decode('utf-8')
 
 def bash_lines(cmd: str) -> list[str]:
     return bash_pipe(cmd).strip().split('\n')
@@ -34,3 +38,14 @@ def prefix_bin(count: int) -> str:
     prefix = BIN_PREFIX[power - 1]
     value = count / (1024 ** power)
     return f'{value:.1f}{prefix}B'
+
+def table(rows: list[list[str]], sep='  ') -> str:
+    if len(rows) < 1: return ''
+    widths = {}
+    for row in rows:
+        for i, v in enumerate(row): widths[i] = max(widths.get(i) or 0, len(v))
+    lines = []
+    for row in rows:
+        items = [v + ' ' * (widths.get(i) - len(v)) for i, v in enumerate(row)]
+        lines.append(sep.join(items))
+    return '\n'.join(lines)

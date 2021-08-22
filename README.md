@@ -2,7 +2,10 @@
 
 ## Features
 
-- [ ] basic partitioning
-- [ ] base install (kernel, firmware, base, bootloader)
-- [ ] base config (host, user, timezone, sudo)
-- [ ] system setup from a specification file
+- [x] basic partitioning
+- [x] base install (kernel, firmware, base, bootloader)
+- [x] base config (host, user, timezone, sudo)
+- [x] system setup from a specification file
+- [ ] spec tag selection
+- [ ] curl spec file
+- [ ] custom iso

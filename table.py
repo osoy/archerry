@@ -1,7 +1,7 @@
 from enum import Enum
 from partition import Partition
 import templates
-from utils import cat
+from utils import concat
 
 class TableKind(str, Enum):
     GPT = 'gpt'
@@ -27,34 +27,34 @@ class Table:
             cmds.append(partition.script(device, pointer))
             if partition.size_mb: pointer += partition.size_mb
             else: break
-        return cat(cmds)
+        return concat(cmds)
 
     def format_script(self, device: str) -> str:
         cmds = []
         for i, partition in enumerate(self.partitions):
             cmds.append(partition.kind.format_script(
                 Partition.device(device, i + 1)))
-        return cat(cmds)
+        return concat(cmds)
 
     def mount_script(self, device: str) -> str:
         cmds = []
         for i, partition in enumerate(self.partitions):
             cmds.append(partition.kind.mount_script(
                 Partition.device(device, i + 1)))
-        return cat(cmds)
+        return concat(cmds)
 
     def fstab_script(self, device: str) -> str:
         entries = []
         for i, partition in enumerate(self.partitions):
             entries.append(partition.kind.fstab_entry_script(
                 Partition.device(device, i + 1)))
-        return cat([
+        return concat([
             'mkdir -p /mnt/etc',
-            f'echo "{cat(entries)}" > /mnt/etc/fstab',
+            f'echo "{concat(entries)}" > /mnt/etc/fstab',
         ])
 
     def script(self, device: str) -> str:
-        return cat([
+        return concat([
             self.partition_script(device),
             self.format_script(device),
             self.mount_script(device),

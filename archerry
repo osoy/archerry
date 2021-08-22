@@ -3,6 +3,7 @@
 from subprocess import run
 from setup import Setup
 from ui import input_bool
+from utils import bash_pipe
 
 Setup.from_input().write_dist('dist')
 if input_bool('Run'):

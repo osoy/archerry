@@ -4,7 +4,7 @@ from os.path import exists
 from table import Table, TableKind
 from partition import Partition
 from ui import input_choice, input_natural
-from utils import bash_pipe, bash_lines, prefix_bin
+from utils import bash_pipe, bash_lines, prefix_bin, table
 import templates
 
 def efi_exists() -> bool:
@@ -20,13 +20,18 @@ def available_disks() -> list[[str, int]]:
         except: pass
     return disks
 
+def print_disks(disks: list[[str, int]]):
+    rows = [['Nr', 'Path', 'Size']]
+    for i, disk in enumerate(disks):
+        rows.append([str(i), disk[0], prefix_bin(disk[1])])
+    print(table(rows))
+
 def input_disk_device() -> str:
     disks = available_disks()
     if len(disks) < 1: raise Exception('No disks found')
-    str_of_disk = lambda disk : '- %s (%s)' % (disk[0], prefix_bin(disk[1]))
-    print('\n'.join(['Available disks:'] + list(map(str_of_disk, disks))))
-    disk_paths = set(map(lambda disk : disk[0], disks))
-    chosen = input_choice('Device', disk_paths)
+    print_disks(disks)
+    disk_nrs = set([str(i) for i in range(len(disks))])
+    chosen = input_choice('Device (nr)', disk_nrs)
     return chosen
 
 def input_swap_size_mb() -> int:

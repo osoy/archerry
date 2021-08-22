@@ -3,7 +3,7 @@ from itertools import chain
 import yaml
 import tag
 from installer import Installer
-from utils import repo_url, base_dir, write_script, cat
+from utils import repo_url, base_dir, write_script, concat
 import templates
 
 class Specification(dict):
@@ -34,7 +34,7 @@ class Specification(dict):
         return self.installer().script(self.pkg_list())
 
     def git_script(self) -> str:
-        return cat(map(
+        return concat(map(
             lambda entry : 'git clone %s %s' % (
                 repo_url(entry['repo']),
                 entry.get('path') or ''),
@@ -44,15 +44,15 @@ class Specification(dict):
         return tag.list_of(self, 'fs')
 
     def fs_script(self) -> str:
-        return cat(map(
+        return concat(map(
             lambda entry : write_script(entry['write'], entry['path']),
             self.writes()))
 
     def custom_script(self) -> str:
-        return cat(tag.list_of(self, 'cmd'))
+        return concat(tag.list_of(self, 'cmd'))
 
     def script(self) -> str:
-        return cat([
+        return concat([
             self.pkg_script(),
             self.git_script(),
             self.fs_script(),
@@ -80,5 +80,9 @@ class Specification(dict):
             (len(entries), missing_count, diff_count))
 
     def check(self) -> str:
+        print('Checking fs...')
         self.check_fs()
+        print()
+        print('Checking pkg...')
         self.check_pkg()
+        print()
