@@ -3,13 +3,25 @@
 from subprocess import run
 from setup import Setup
 from ui import input_bool
-from sys import argv
+from argparse import ArgumentParser
+from specification import Specification
 
-if len(argv) < 2:
-    print('archerry <file>')
+parser = ArgumentParser(description='Declerative Arch Linux installer')
+parser.add_argument('file', help='Specification file')
+parser.add_argument(
+    '-c',
+    action='store_const',
+    const=True,
+    default=False,
+    help='Check with specification',
+)
+args = parser.parse_args()
+
+if args.c:
+    Specification.from_file(args.file).check()
     exit()
 
-Setup.from_input(argv[1]).write_dist('dist')
+Setup.from_input(args.file).write_dist('dist')
 if input_bool('Run'):
     run('bash dist/main.bash | tee archerry.log', shell=True)
     run(['mv', '-v', 'archerry.log', '/mnt/var/log'])
