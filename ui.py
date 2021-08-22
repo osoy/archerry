@@ -4,40 +4,43 @@ from getpass import getpass
 
 T = TypeVar('T')
 
-def safe_input(prompt: str, default='') -> str:
+def safe_input(prompt: str, nullable=False) -> str:
     if prompt[-1] != ' ': prompt += ': '
-    try: return input(prompt) or default
+    try: return input(prompt)
     except KeyboardInterrupt: exit(1)
     except EOFError:
         print()
-        return default
+        if nullable: return None
 
-def input_bool(prompt: str, default=None) -> bool:
+def input_bool(prompt: str, nullable=False) -> Optional[bool]:
     if prompt[-1] != ' ': prompt += '? '
     while True:
         val = safe_input(prompt)
         if not val:
-            if default != None: return default
-            else continue
+            if nullable: return None
+            else: continue
         if val.upper() in ['Y', 'YES']: return True
         if val.upper() in ['N', 'NO']: return False
 
-def input_word(prompt: str, default=0) -> int:
-    while True:
-        val = safe_input(prompt, default)
-        if not val: continue
-        return val.strip().replace(' ', '_')
-
-def input_int(prompt: str, default=0) -> int:
+def input_word(prompt: str, nullable=False) -> Optional[bool]:
     while True:
         val = safe_input(prompt)
-        try: return int(val or default)
+        if not val:
+            if nullable: return None
+        else: return val.strip().replace(' ', '_')
+
+def input_int(prompt: str, nullable=False) -> Optional[int]:
+    while True:
+        val = safe_input(prompt)
+        if not val and nullable: return None
+        try: return int(val)
         except: pass
 
-def input_natural(prompt: str, default=0) -> int:
+def input_natural(prompt: str, nullable=False) -> Optional[int]:
     while True:
-        val = input_int(prompt, default)
-        if val >= 0: return val
+        val = input_int(prompt, nullable)
+        if val == None: return None
+        elif val >= 0: return val
         else: print('Must be 0 or greater')
 
 def input_choice(prompt: str, options: set[str]) -> str:
@@ -53,9 +56,12 @@ def input_choice(prompt: str, options: set[str]) -> str:
 
 def input_index(prompt: str, options: list[T]) -> T:
     while True:
-        index = input_natural(prompt, None)
-        if index == None or index >= len(options): continue
-        return options[index]
+        index = input_natural(prompt, True)
+        if index == None:
+            if len(options) == 1: index = 0
+            else: continue
+        if index >= len(options): print('Must be less than %i' % len(options))
+        else: return options[index]
 
 def input_secret(prompt: str) -> str:
     while True:
