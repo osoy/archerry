@@ -52,10 +52,10 @@ class Specification(dict):
             self.custom_script(),
         ], 2)
 
-    def check_pkg(self):
-        self.installer().check(self.pkg_list())
+    def check_pkg(self) -> int:
+        return self.installer().check(self.pkg_list())
 
-    def check_fs(self):
+    def check_fs(self) -> int:
         missing_count = 0
         diff_count = 0
         entries = self.writes()
@@ -66,18 +66,21 @@ class Specification(dict):
                 with open(path, 'r') as file:
                     content = file.read()
                     if content.strip() != entry['write'].strip():
-                        print('Diff: %s' % path)
+                        print('Different: %s' % path)
                         diff_count += 1
             except:
                 print('Missing: %s' % path)
                 missing_count += 1
-        print('Total %i, Missing %i, Diff %i' % \
+        print('Total %i, Missing %i, Different %i' % \
             (len(entries), missing_count, diff_count))
+        return missing_count + diff_count
 
-    def check(self) -> str:
+    def check(self) -> int:
+        errors = 0
         print('Checking fs...')
-        self.check_fs()
+        errors += self.check_fs()
         print()
         print('Checking pkg...')
-        self.check_pkg()
+        errors += self.check_pkg()
         print()
+        return errors

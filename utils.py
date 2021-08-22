@@ -1,4 +1,4 @@
-from subprocess import run, PIPE, DEVNULL, CompletedProcess
+from subprocess import run, PIPE, DEVNULL
 
 def repo_url(val: str) -> str:
     if '@' not in val and '://' not in val: val = f'https://{val}'

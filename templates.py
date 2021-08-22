@@ -2,8 +2,9 @@ from string import Template
 
 SCRIPT_HEAD = '#!/bin/bash'
 
-TS = Template('''
+STATUS = Template('''
 printf '\\n[%s] $msg\\n\\n' "$$(date +%FT%T)"
+echo '$msg' > archerry.status
 ''')
 
 CWD = '''

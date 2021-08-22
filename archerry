@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from subprocess import run
 from setup import Setup
 from ui import input_bool
 from argparse import ArgumentParser
@@ -17,11 +16,9 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-if args.c:
-    Specification.from_file(args.file).check()
-    exit()
+if args.c: exit(Specification.from_file(args.file).check())
 
-Setup.from_input(args.file).write_dist('dist')
-if input_bool('Run'):
-    run('bash dist/main.bash | tee archerry.log', shell=True)
-    run(['mv', '-v', 'archerry.log', '/mnt/var/log'])
+setup = Setup(args.file, 'dist')
+setup.input()
+setup.write_dist()
+if input_bool('Run'): setup.run()
