@@ -1,5 +1,6 @@
 from sys import argv
 from itertools import chain
+from pathlib import Path
 import yaml
 import tag
 from installer import Installer
@@ -67,14 +68,16 @@ class Specification(dict):
         diff_count = 0
         entries = self.writes()
         for entry in entries:
+            path = entry['path']
+            if path[0:2] == '~/': path = str(Path.home()) + path[1:]
             try:
-                with open(entry['path'], 'r') as file:
+                with open(path, 'r') as file:
                     content = file.read()
                     if content.strip() != entry['write'].strip():
-                        print('Diff: %s' % entry['path'])
+                        print('Diff: %s' % path)
                         diff_count += 1
             except:
-                print('Missing: %s' % entry['path'])
+                print('Missing: %s' % path)
                 missing_count += 1
         print('Total %i, Missing %i, Diff %i' % \
             (len(entries), missing_count, diff_count))
