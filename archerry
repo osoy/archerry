@@ -3,8 +3,12 @@
 from subprocess import run
 from setup import Setup
 from ui import input_bool
-from utils import bash_pipe
+from sys import argv
 
-Setup.from_input().write_dist('dist')
+if len(argv) < 2:
+    print('archerry <file>')
+    exit()
+
+Setup.from_input(argv[1]).write_dist('dist')
 if input_bool('Run'):
     run('bash dist/main.bash | tee archerry.log', shell=True)

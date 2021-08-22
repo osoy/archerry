@@ -1,4 +1,3 @@
-from sys import argv
 from itertools import chain
 from pathlib import Path
 import yaml
@@ -15,13 +14,6 @@ class Specification(dict):
         except:
             print(f"could not read '{name}'")
             exit(4)
-
-    @classmethod
-    def from_args(cls):
-        if len(argv) < 2:
-            print('usage: archerry <file>')
-            exit(4)
-        return Specification.from_file(argv[1])
 
     def installer(self) -> Installer:
         return (Installer.PACMAN, Installer.YAY) [self.get('yay') == True]

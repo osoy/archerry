@@ -11,9 +11,9 @@ class Setup:
     spec: Specification
 
     @classmethod
-    def from_input(cls):
+    def from_input(cls, spec_file: str):
         setup = Setup()
-        setup.spec = Specification.from_args()
+        setup.spec = Specification.from_file(spec_file)
         setup.disk = DiskSetup.from_input()
         setup.pref = Preferences.from_input()
         return setup

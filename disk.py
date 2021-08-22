@@ -3,8 +3,8 @@ from typing import Optional
 from os.path import exists
 from table import Table, TableKind
 from partition import Partition
-from ui import input_choice, input_natural
-from utils import bash_pipe, bash_lines, prefix_bin, table
+from ui import input_index, input_natural, prefix_bin, table
+from utils import bash_pipe, bash_lines
 import templates
 
 def efi_exists() -> bool:
@@ -30,8 +30,7 @@ def input_disk_device() -> str:
     disks = available_disks()
     if len(disks) < 1: raise Exception('No disks found')
     print_disks(disks)
-    disk_nrs = set([str(i) for i in range(len(disks))])
-    chosen = input_choice('Device (nr)', disk_nrs)
+    chosen = input_index('Device (nr)', disks)[0]
     return chosen
 
 def input_swap_size_mb() -> int:

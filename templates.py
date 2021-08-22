@@ -3,7 +3,7 @@ from string import Template
 SCRIPT_HEAD = '#!/bin/bash'
 
 TS = Template('''
-printf '\n[%s] $msg\n\n' "$$(date +%FT%T)"
+printf '\\n[%s] $msg\\n\\n' "$$(date +%FT%T)"
 ''')
 
 CWD = '''
