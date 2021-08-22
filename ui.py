@@ -1,5 +1,4 @@
 from typing import Optional
-from os import path
 from getpass import getpass
 
 def safe_input(prompt: str, default='') -> str:
@@ -46,13 +45,6 @@ def input_choice(prompt: str, options: set[str]) -> str:
             return matches[0]
         elif len(matches) == 0: print('No matches')
         elif query: print('Multiple matches')
-
-def input_file(prompt: str) -> str:
-    while True:
-        val = safe_input(prompt)
-        if not val: continue
-        elif path.isfile(val): return val
-        else: print(f"File '{val}' not found")
 
 def input_secret(prompt: str) -> str:
     while True:

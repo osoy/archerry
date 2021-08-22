@@ -13,9 +13,9 @@ class Setup:
     @classmethod
     def from_input(cls):
         setup = Setup()
+        setup.spec = Specification.from_args()
         setup.disk = DiskSetup.from_input()
         setup.pref = Preferences.from_input()
-        setup.spec = Specification.from_input()
         return setup
 
     def iso_script(self):

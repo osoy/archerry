@@ -115,7 +115,7 @@ cmd:
   - rustup default stable
   - |
     rustup completions bash |
-    sudo tee /usr/share/bash-completion/completions/rustup
+    sudo tee /usr/share/bash-completion/completions/rustup > /dev/null
   - |
     cd ~/.osoy/src/gitlab.com/osoy/osoy
     make

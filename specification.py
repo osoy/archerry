@@ -1,19 +1,26 @@
+from sys import argv
 from itertools import chain
 import yaml
 import tag
 from installer import Installer
-from ui import input_file
 from utils import repo_url, base_dir, write_script, cat
 import templates
 
 class Specification(dict):
     @classmethod
     def from_file(cls, name: str):
-        with open(name, 'r') as file: return cls(yaml.safe_load(file))
+        try:
+            with open(name, 'r') as file: return cls(yaml.safe_load(file))
+        except:
+            print(f"could not read '{name}'")
+            exit(4)
 
     @classmethod
-    def from_input(cls):
-        return Specification.from_file(input_file('Config file'))
+    def from_args(cls):
+        if len(argv) < 2:
+            print('usage: archerry <file>')
+            exit(4)
+        return Specification.from_file(argv[1])
 
     def installer(self) -> Installer:
         return (Installer.PACMAN, Installer.YAY) [self.get('yay') == True]
