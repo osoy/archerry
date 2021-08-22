@@ -55,3 +55,6 @@ class Specification(dict):
             self.fs_script(),
             self.custom_script(),
         ], 2)
+
+    def check(self) -> str:
+        self.installer().check(self.pkg_list())
