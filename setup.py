@@ -35,6 +35,7 @@ class Setup:
             CHROOT_USER.substitute(
                 file='user.bash',
                 user=self.pref.username),
+            TS.substitute(msg='Done'),
         ], 2)
 
     def root_script(self):
