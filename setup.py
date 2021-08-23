@@ -1,6 +1,5 @@
 from os import path, mkdir
-from subprocess import run, CompletedProcess
-from threading import Thread
+from subprocess import Popen, run, PIPE, STDOUT
 from time import time, sleep
 from datetime import datetime
 
@@ -75,14 +74,6 @@ class Setup:
         with open(f'{self.dist_dir}/user.bash', 'w') as file:
             file.write(self.user_script())
 
-    def exec_dist(self) -> CompletedProcess:
-        run(['rm', '-f', 'archerry.log'])
-        proc = run(
-            f'bash {self.dist_dir}/main.bash | tee archerry.log',
-            shell=True)
-        run(['mv', 'archerry.log', '/mnt/var/log'])
-        return proc
-
     def read_state(self) -> str:
         try:
             with open(f'{self.dist_dir}/state') as file:
@@ -90,14 +81,19 @@ class Setup:
         except: return ''
 
     def run(self):
-        thread = Thread(target=self.exec_dist)
-        thread.start()
         start = time()
-        while thread.is_alive():
+        run(['rm', '-f', 'archerry.log'])
+        proc = Popen(
+            f'bash {self.dist_dir}/main.bash | tee archerry.log',
+            stdout=PIPE,
+            stderr=STDOUT,
+            shell=True)
+        while line := proc.stdout.readline().decode('utf-8'):
             passed = fmt_seconds(int(time() - start))
             moment = datetime.now().strftime('%H:%M:%S')
             state = self.read_state()
             usage = mnt_usage()
+            print(line, end='')
             print_status(usage, f'{passed} {moment}', state)
-            sleep(.5)
+        run(['mv', 'archerry.log', '/mnt/var/log'])
         print(f'Completed in {moment}')
