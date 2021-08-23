@@ -2,14 +2,14 @@ from string import Template
 
 SCRIPT_HEAD = '#!/bin/bash'
 
-STATUS = Template('''
-printf '\\n[%s] $msg\\n\\n' "$$(date +%FT%T)"
-echo '$msg' > archerry.status
-''')
-
 CWD = '''
 cd "$(dirname "$(readlink -f "$0")")"
 '''
+
+STATUS = Template('''
+printf '\\n[%s] $msg\\n\\n' "$$(date +%FT%T)"
+echo '$msg' > state
+''')
 
 PARTED = Template('''
 parted -s $device -- $command
@@ -22,6 +22,10 @@ lsblk -bo type,path,size |
 
 MEMORY = '''
 free -b | sed -n 's/^Mem: *\([^ ]\+\) .*$/\\1/p'
+'''
+
+MNT_USAGE = '''
+df -B 1 | sed -n 's|^[^ ]\+ \+[^ ]\+ \+\([^ ]\+\) .\+ /mnt$|\\1|p'
 '''
 
 BLK_UUID = Template('''

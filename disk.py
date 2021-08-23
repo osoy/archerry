@@ -1,9 +1,10 @@
 from enum import Enum
 from typing import Optional
 from os.path import exists
+
 from table import Table, TableKind
 from partition import Partition
-from ui import input_index, input_natural, prefix_bin, table
+from ui import input_index, input_natural, bin_unit, table
 from utils import bash_pipe, bash_lines
 import templates
 
@@ -23,7 +24,7 @@ def available_disks() -> list[[str, int]]:
 def print_disks(disks: list[[str, int]]):
     rows = [['Nr', 'Path', 'Size']]
     for i, disk in enumerate(disks):
-        rows.append([str(i), disk[0], prefix_bin(disk[1])])
+        rows.append([str(i), disk[0], bin_unit(disk[1])])
     print(table(rows))
 
 def input_disk_device() -> str:
@@ -34,8 +35,8 @@ def input_disk_device() -> str:
     return chosen
 
 def input_swap_size_mb() -> int:
-    print('Detected memory ' + prefix_bin(int(bash_pipe(templates.MEMORY))))
-    return input_natural('Swap size in MiB (optional)')
+    print('Detected memory ' + bin_unit(int(bash_pipe(templates.MEMORY))))
+    return input_natural('Swap size in MiB (optional)', True)
 
 class DiskSetup:
     device: str

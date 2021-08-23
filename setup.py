@@ -1,10 +1,19 @@
 from os import path, mkdir
 from subprocess import run, CompletedProcess
+from threading import Thread
+from time import time, sleep
+from datetime import datetime
+
 from disk import DiskSetup
 from specification import Specification
 from preferences import Preferences
-from utils import concat
+from utils import concat, bash_pipe
+from ui import print_status, fmt_seconds, bin_unit
 from templates import *
+
+def mnt_usage() -> str:
+    try: return bin_unit(int(bash_pipe(MNT_USAGE)))
+    except: return ''
 
 class Setup:
     disk: DiskSetup
@@ -67,10 +76,28 @@ class Setup:
             file.write(self.user_script())
 
     def exec_dist(self) -> CompletedProcess:
-        return run(
+        run(['rm', '-f', 'archerry.log'])
+        proc = run(
             f'bash {self.dist_dir}/main.bash | tee archerry.log',
             shell=True)
+        run(['mv', 'archerry.log', '/mnt/var/log'])
+        return proc
+
+    def read_state(self) -> str:
+        try:
+            with open(f'{self.dist_dir}/state') as file:
+                return file.read().strip()
+        except: return ''
 
     def run(self):
-        self.exec_dist()
-        run(['mv', 'archerry.log', '/mnt/var/log'])
+        thread = Thread(target=self.exec_dist)
+        thread.start()
+        start = time()
+        while thread.is_alive():
+            passed = fmt_seconds(int(time() - start))
+            moment = datetime.now().strftime('%H:%M:%S')
+            state = self.read_state()
+            usage = mnt_usage()
+            print_status(usage, f'{passed} {moment}', state)
+            sleep(.5)
+        print(f'Completed in {moment}')

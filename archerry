@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
+from argparse import ArgumentParser
 from setup import Setup
 from ui import input_bool
-from argparse import ArgumentParser
+from utils import rel_path
 from specification import Specification
 
 parser = ArgumentParser(description='Declerative Arch Linux installer')
@@ -18,7 +19,7 @@ args = parser.parse_args()
 
 if args.c: exit(Specification.from_file(args.file).check())
 
-setup = Setup(args.file, 'dist')
+setup = Setup(args.file, rel_path('dist'))
 setup.input()
 setup.write_dist()
 if input_bool('Run'): setup.run()

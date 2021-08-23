@@ -1,4 +1,6 @@
 from typing import Optional, TypeVar
+from sys import stdout
+from os import get_terminal_size
 from math import log
 from getpass import getpass
 
@@ -84,9 +86,26 @@ def table(rows: list[list[str]], sep='  ') -> str:
 
 BIN_PREFIX = ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi']
 
-def prefix_bin(count: int) -> str:
+def bin_unit(count: int) -> str:
     power = min(int(log(count, 1024)), len(BIN_PREFIX))
     if power == 0: return f'{count}B'
     prefix = BIN_PREFIX[power - 1]
     value = count / (1024 ** power)
     return f'{value:.1f}{prefix}B'
+
+def fmt_seconds(count: int) -> str:
+    seconds = count % 60
+    minutes = int(count / 60) % 60
+    hours = int(count / 60 / 60) % 60
+    return '%02i:%02i:%02i' % (hours, minutes, seconds)
+
+def print_status(left = '', right = '', center = ''):
+    width = get_terminal_size().columns
+    sides_space = width - len(center)
+    left_half = int(sides_space / 2)
+    right_half = sides_space - left_half
+    left_space = left_half - len(left)
+    right_space = right_half - len(right)
+    label = left + (' ' * left_space) + center + (' ' * right_space) + right
+    print(f'\33[s\33[H\33[30;47m{label}\33[m\33[u', end='')
+    stdout.flush()

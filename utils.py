@@ -1,3 +1,4 @@
+from os.path import realpath
 from subprocess import run, PIPE, DEVNULL
 
 def repo_url(val: str) -> str:
@@ -5,7 +6,12 @@ def repo_url(val: str) -> str:
     return val
 
 def base_dir(path: str) -> str:
+    if path[-1] == '/': path = path[0:-1]
     return '/'.join(path.split('/')[0:-1])
+
+def rel_path(path: str) -> str:
+    if path and path[0] != '/': path = '/' + path
+    return base_dir(realpath(__file__)) + path
 
 def write_script(content: str, path: str) -> str:
     prefix = ('', 'sudo ') [path[0] == '/']
