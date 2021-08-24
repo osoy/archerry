@@ -1,4 +1,5 @@
 from os import path, mkdir
+from threading import Thread
 from subprocess import Popen, run, PIPE, STDOUT
 from time import time, sleep
 from datetime import datetime
@@ -19,10 +20,12 @@ class Setup:
     pref: Preferences
     spec: Specification
     dist_dir: str
+    started_at: float
 
     def __init__(self, spec_file: str, dist_dir='.'):
         self.dist_dir = dist_dir
         self.spec = Specification.from_file(spec_file)
+        self.started_at = time()
 
     def input(self):
         self.disk = DiskSetup.from_input()
@@ -80,20 +83,33 @@ class Setup:
                 return file.read().strip()
         except: return ''
 
-    def run(self):
-        start = time()
-        run(['rm', '-f', 'archerry.log'])
+    def passed(self) -> str:
+        return fmt_seconds(int(time() - self.started_at))
+
+    def print_status(self):
+        moment = datetime.now().strftime('%H:%M:%S')
+        passed = self.passed()
+        state = self.read_state()
+        usage = mnt_usage()
+        print_status(usage, f'{passed} {moment}', state)
+
+    def exec_dist(self):
         proc = Popen(
-            f'bash {self.dist_dir}/main.bash | tee archerry.log',
+            ['bash', f'{self.dist_dir}/main.bash'],
             stdout=PIPE,
-            stderr=STDOUT,
-            shell=True)
+            stderr=STDOUT)
         while line := proc.stdout.readline().decode('utf-8'):
-            passed = fmt_seconds(int(time() - start))
-            moment = datetime.now().strftime('%H:%M:%S')
-            state = self.read_state()
-            usage = mnt_usage()
             print(line, end='')
-            print_status(usage, f'{passed} {moment}', state)
+            self.print_status()
+            with open('archerry.log', 'a') as file: file.write(line)
+
+    def run(self):
+        self.started_at = time()
+        run(['rm', '-f', 'archerry.log'])
+        thread = Thread(target=self.exec_dist)
+        thread.start()
+        while thread.is_alive():
+            self.print_status()
+            sleep(.5)
         run(['mv', 'archerry.log', '/mnt/var/log'])
-        print(f'Completed in {moment}')
+        print(f'Completed in {self.passed()}')
