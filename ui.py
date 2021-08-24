@@ -1,5 +1,4 @@
 from typing import Optional, TypeVar, Union
-from sys import stdout
 from os import get_terminal_size
 from math import log
 from getpass import getpass
@@ -100,7 +99,7 @@ def fmt_seconds(count: int) -> str:
     hours = int(count / 60 / 60) % 60
     return '%02i:%02i:%02i' % (hours, minutes, seconds)
 
-def print_status(left = '', right = '', center = ''):
+def status_bar(left = '', right = '', center = '') -> str:
     width = get_terminal_size().columns
     sides_space = width - len(center)
     left_half = int(sides_space / 2)
@@ -108,5 +107,4 @@ def print_status(left = '', right = '', center = ''):
     left_space = left_half - len(left)
     right_space = right_half - len(right)
     label = left + (' ' * left_space) + center + (' ' * right_space) + right
-    print(f'\33[s\33[H\33[30;47m{label}\33[m\33[u', end='')
-    stdout.flush()
+    return f'\33[s\33[H\33[30;47m{label}\33[m\33[u'

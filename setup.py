@@ -1,4 +1,5 @@
 from os import path, mkdir
+from sys import stdout
 from threading import Thread
 from subprocess import Popen, run, PIPE, STDOUT
 from time import time, sleep
@@ -8,7 +9,7 @@ from disk import DiskSetup
 from specification import Specification
 from preferences import Preferences
 from utils import concat, bash_pipe
-from ui import print_status, fmt_seconds, bin_unit
+from ui import status_bar, fmt_seconds, bin_unit
 from templates import *
 
 def mnt_usage() -> str:
@@ -87,12 +88,12 @@ class Setup:
     def passed(self) -> str:
         return fmt_seconds(int(time() - self.started_at))
 
-    def print_status(self):
+    def status_bar(self) -> str:
         moment = datetime.now().strftime('%H:%M:%S')
         passed = self.passed()
         state = self.read_state()
         usage = mnt_usage()
-        print_status(usage, f'{passed} {moment}', state)
+        return status_bar(usage, f'{passed} {moment}', state)
 
     def exec_dist(self):
         proc = Popen(
@@ -100,8 +101,8 @@ class Setup:
             stdout=PIPE,
             stderr=STDOUT)
         while line := proc.stdout.readline().decode('utf-8'):
-            print(line, end='')
-            self.print_status()
+            stdout.write(line + self.status_bar())
+            stdout.flush()
             with open('archerry.log', 'a') as file: file.write(line)
 
     def run(self):
@@ -110,7 +111,8 @@ class Setup:
         thread = Thread(target=self.exec_dist)
         thread.start()
         while thread.is_alive():
-            self.print_status()
+            stdout.write(self.status_bar())
+            stdout.flush()
             sleep(.5)
         run(['mv', 'archerry.log', '/mnt/var/log'])
         print(f'Completed in {self.passed()}')
