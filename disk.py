@@ -39,17 +39,21 @@ def input_swap_size_mb() -> int:
     return input_natural('Swap size in MiB (optional)', True)
 
 class DiskSetup:
-    device: str
-    efi_size_mb: int
-    swap_size_mb: int
+    device: Optional[str] = None
+    efi_size_mb: int = (0, 512) [efi_exists()]
+    swap_size_mb: Optional[int] = None
 
     @classmethod
-    def from_input(cls):
+    def from_dict(cls, obj: dict):
         disk_setup = DiskSetup()
-        disk_setup.device = input_disk_device()
-        disk_setup.efi_size_mb = (0, 512) [efi_exists()]
-        disk_setup.swap_size_mb = input_swap_size_mb()
+        disk_setup.device = obj.get('disk')
+        try: disk_setup.swap_size_mb = int(obj.get('swap'))
+        except: pass
         return disk_setup
+
+    def input_missing(self):
+        if not self.device: self.device = input_disk_device()
+        if self.swap_size_mb == None: self.swap_size_mb = input_swap_size_mb()
 
     def table(self) -> Table:
         kind = TableKind.MBR

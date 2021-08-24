@@ -1,4 +1,6 @@
 yay: true
+swap: 1024
+timezone: Europe/Helsinki
 
 pkg:
   - tree tmux calc neovim

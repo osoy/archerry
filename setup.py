@@ -20,16 +20,17 @@ class Setup:
     pref: Preferences
     spec: Specification
     dist_dir: str
-    started_at: float
+    started_at: float = time()
 
-    def __init__(self, spec_file: str, dist_dir='.'):
+    def __init__(self, spec: Specification, dist_dir='.'):
         self.dist_dir = dist_dir
-        self.spec = Specification.from_file(spec_file)
-        self.started_at = time()
+        self.spec = spec
+        self.pref = Preferences.from_dict(spec)
+        self.disk = DiskSetup.from_dict(spec)
 
-    def input(self):
-        self.disk = DiskSetup.from_input()
-        self.pref = Preferences.from_input()
+    def input_missing(self):
+        self.pref.input_missing()
+        self.disk.input_missing()
 
     def iso_script(self) -> str:
         return concat([

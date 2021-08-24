@@ -1,3 +1,4 @@
+from typing import Union
 from os.path import realpath
 from subprocess import run, PIPE, DEVNULL
 
@@ -34,3 +35,7 @@ def bash_pipe(cmd: str) -> str:
 
 def bash_lines(cmd: str) -> list[str]:
     return bash_pipe(cmd).strip().split('\n')
+
+def search(query: str, options: set[str]) -> Union[str, list[str]]:
+    if query in options: return query
+    return [opt for opt in options if query.upper() in opt.upper()]

@@ -2,9 +2,9 @@ from itertools import chain
 from pathlib import Path
 import yaml
 import tag
+from preferences import Preferences
 from installer import Installer
 from utils import repo_url, base_dir, write_script, concat
-import templates
 
 class Specification(dict):
     @classmethod

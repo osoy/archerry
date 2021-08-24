@@ -17,9 +17,11 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-if args.c: exit(Specification.from_file(args.file).check())
+spec = Specification.from_file(args.file)
 
-setup = Setup(args.file, rel_path('dist'))
-setup.input()
+if args.c: exit(spec.check())
+
+setup = Setup(spec, rel_path('dist'))
+setup.input_missing()
 setup.write_dist()
 if input_bool('Run'): setup.run()

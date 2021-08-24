@@ -1,3 +1,4 @@
+from typing import Optional
 from subprocess import run, PIPE
 from ui import input_word, input_secret, input_choice
 from utils import concat, bash_lines
@@ -7,19 +8,29 @@ def timezones() -> list[str]:
     return bash_lines(templates.TIMEZONES)
 
 class Preferences:
-    hostname: str
-    username: str
-    password: str
-    timezone: str
+    hostname: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
+    timezone: Optional[str] = None
 
     @classmethod
-    def from_input(cls):
-        preferences = Preferences()
-        preferences.hostname = input_word('Hostname')
-        preferences.username = input_word('Username')
-        preferences.password = input_secret('Password')
-        preferences.timezone = input_choice('Timezone', timezones())
-        return preferences
+    def from_dict(cls, obj: dict):
+        pref = Preferences()
+        pref.hostname = obj.get('hostname')
+        pref.username = obj.get('username')
+        pref.password = obj.get('password')
+        pref.timezone = obj.get('timezone')
+        return pref
+
+    def input_missing(self):
+        if not self.hostname:
+            self.hostname = input_word('Hostname')
+        if not self.username:
+            self.username = input_word('Username')
+        if not self.password:
+            self.password = input_secret('Password')
+        if not self.timezone:
+            self.timezone = input_choice('Timezone', timezones())
 
     def script(self):
         return concat([

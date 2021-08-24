@@ -1,8 +1,9 @@
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, Union
 from sys import stdout
 from os import get_terminal_size
 from math import log
 from getpass import getpass
+from utils import search
 
 T = TypeVar('T')
 
@@ -48,12 +49,12 @@ def input_natural(prompt: str, nullable=False) -> Optional[int]:
 def input_choice(prompt: str, options: set[str]) -> str:
     while True:
         query = safe_input(prompt)
-        if query in options: return query
-        matches = [opt for opt in options if query.upper() in opt.upper()]
-        if len(matches) == 1:
-            print(f'> {matches[0]}')
-            return matches[0]
-        elif len(matches) == 0: print('No matches')
+        match = search(query, options)
+        if isinstance(match, str): return match
+        elif len(match) == 1:
+            print(f'> {match[0]}')
+            return match[0]
+        elif len(match) == 0: print('No matches')
         elif query: print('Multiple matches')
 
 def input_index(prompt: str, options: list[T]) -> T:
