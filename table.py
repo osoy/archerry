@@ -1,5 +1,5 @@
 from enum import Enum
-from partition import Partition
+from partition import Partition, PartitionKind
 import templates
 from utils import concat
 
@@ -39,8 +39,10 @@ class Table:
     def mount_script(self, device: str) -> str:
         cmds = []
         for i, partition in enumerate(self.partitions):
-            cmds.append(partition.kind.mount_script(
-                Partition.device(device, i + 1)))
+            partition_device = Partition.device(device, i + 1)
+            script = partition.kind.mount_script(partition_device)
+            if partition.kind == PartitionKind.ROOT: cmds = [script] + cmds
+            else: cmds.append(script)
         return concat(cmds)
 
     def fstab_script(self, device: str) -> str:

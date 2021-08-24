@@ -16,7 +16,7 @@ class Specification(dict):
             exit(4)
 
     def installer(self) -> Installer:
-        return (Installer.PACMAN, Installer.YAY) [self.get('yay') == True]
+        return (Installer.PACMAN, Installer.YAY) [self.get('yay')]
 
     def pkg_list(self) -> list[str]:
         return list(chain(*map(

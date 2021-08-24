@@ -4,15 +4,17 @@ pkg:
   - tree tmux calc neovim
   - bash-completion fzf ripgrep
   - pipewire pipewire-pulse
-  - bluez bluez-tools
   - p7zip
   - rustup
+  - tag: bt
+    pkg: bluez bluez-utils
   - tag: net
     pkg:
       - dhcpcd
+      - wpa_supplicant wireless_tools
+      - openssh
       - transmission-cli
       - tor torsocks
-      - wpa_supplicant wireless_tools
   - tag: devel
     pkg:
       - postgresql postgresql-libs
@@ -37,10 +39,10 @@ pkg:
       - adobe-source-han-serif-otc-fonts
       - materia-gtk-theme
       - pavucontrol
-  - tag: media
-    pkg:
-      - firefox chromium
-      - gimp inkscape
+      - tag: net
+        pkg: firefox chromium
+      - tag: media
+        pkg: gimp inkscape
   - tag: temp
     pkg: drive-bin ngrok
 
@@ -53,22 +55,22 @@ git:
     path: ~/.osoy/src/gitlab.com/rasmusmerzin/archerry
   - tag: config
     git:
-      - repo: github.com/rasmusmerzin/cfg-bash
-        path: ~/.osoy/src/github.com/rasmusmerzin/cfg-bash
-      - repo: github.com/rasmusmerzin/cfg-tmux
-        path: ~/.osoy/src/github.com/rasmusmerzin/cfg-tmux
-      - repo: github.com/rasmusmerzin/cfg-nvim
-        path: ~/.osoy/src/github.com/rasmusmerzin/cfg-nvim
+      - repo: gitlab.com/rasmusmerzin/cfg-bash
+        path: ~/.osoy/src/gitlab.com/rasmusmerzin/cfg-bash
+      - repo: gitlab.com/rasmusmerzin/cfg-tmux
+        path: ~/.osoy/src/gitlab.com/rasmusmerzin/cfg-tmux
+      - repo: gitlab.com/rasmusmerzin/cfg-nvim
+        path: ~/.osoy/src/gitlab.com/rasmusmerzin/cfg-nvim
   - tag: gui
     git:
-      - repo: github.com/rasmusmerzin/dwm
-        path: ~/.osoy/src/github.com/rasmusmerzin/dwm
-      - repo: github.com/rasmusmerzin/st
-        path: ~/.osoy/src/github.com/rasmusmerzin/st
-      - repo: github.com/rasmusmerzin/dmenu
-        path: ~/.osoy/src/github.com/rasmusmerzin/dmenu
-      - repo: github.com/rasmusmerzin/dwmstatus
-        path: ~/.osoy/src/github.com/rasmusmerzin/dwmstatus
+      - repo: gitlab.com/rasmusmerzin/dwm
+        path: ~/.osoy/src/gitlab.com/rasmusmerzin/dwm
+      - repo: gitlab.com/rasmusmerzin/st
+        path: ~/.osoy/src/gitlab.com/rasmusmerzin/st
+      - repo: gitlab.com/rasmusmerzin/dmenu
+        path: ~/.osoy/src/gitlab.com/rasmusmerzin/dmenu
+      - repo: gitlab.com/rasmusmerzin/dwmstatus
+        path: ~/.osoy/src/gitlab.com/rasmusmerzin/dwmstatus
 
 fs:
   - path: /etc/gitconfig

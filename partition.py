@@ -54,11 +54,11 @@ class Partition:
     def device(cls, disk: str, i: int) -> str:
         return disk + (str(i), 'p' + str(i)) [disk[-1].isdigit()]
 
-    def size(self) -> str:
-        if self.size_mb: return f'{self.size_mb}MiB'
+    def end(self, start: int) -> str:
+        if self.size_mb: return f'{start + self.size_mb}MiB'
         else: return '100%'
 
     def script(self, device: str, start: int) -> str:
         return templates.PARTED.substitute(
             device=device,
-            command=f'mkpart {self.kind} {start}MiB {self.size()}')
+            command=f'mkpart {self.kind} {start}MiB {self.end(start)}')
