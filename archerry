@@ -17,11 +17,12 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-spec = Specification.from_file(args.file)
-
-if args.c: exit(spec.check())
-
-setup = Setup(spec, rel_path('dist'))
-setup.input_missing()
-setup.write_dist()
-if input_bool('Run'): setup.run()
+try:
+    spec = Specification.from_file(args.file)
+    if args.c: exit(spec.check())
+    setup = Setup(spec, rel_path('dist'))
+    setup.input_missing()
+    setup.write_dist()
+    if input_bool('Run'): setup.run()
+except KeyboardInterrupt:
+    print('Interrupt')
