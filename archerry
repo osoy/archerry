@@ -10,17 +10,30 @@ parser = ArgumentParser(description='Declerative Arch Linux installer')
 parser.add_argument('file', help='Specification file')
 parser.add_argument(
     '-c',
+    '--check',
     action='store_const',
-    const=True,
-    default=False,
+    dest='opt',
+    const='c',
     help='Check with specification',
+)
+parser.add_argument(
+    '-u',
+    '--user',
+    action='store_const',
+    dest='opt',
+    const='u',
+    help='Run only user script',
 )
 args = parser.parse_args()
 
 try:
     spec = Specification.from_file(args.file)
-    if args.c: exit(spec.check())
     setup = Setup(spec, rel_path('dist'))
+    if args.opt == 'c': exit(spec.check())
+    elif args.opt == 'u':
+        setup.user_only()
+        setup.write_dist()
+        exit(setup.run())
     setup.input_missing()
     setup.write_dist()
     if input_bool('Run'): setup.run()

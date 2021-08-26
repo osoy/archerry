@@ -7,11 +7,15 @@ class Installer(str, Enum):
     PACMAN = 'sudo pacman'
     YAY = 'yay'
 
+    def sync_cmd(self) -> str:
+        return f'{self} -Syu --noconfirm'
+
     def add_cmd(self) -> str:
-        return f'{self} -Syu --needed --noconfirm'
+        return f'{self} -S --needed --noconfirm'
 
     def script(self, pkg_list: list[str]) -> str:
-        call = concat([self.add_cmd()] + pkg_list, 0)
+        adds = [f'{self.add_cmd()} {pkg}' for pkg in pkg_list]
+        call = concat([self.sync_cmd()] + adds)
         if self == Installer.YAY:
             call = concat([templates.INSTALL_YAY, call], 2)
         return call

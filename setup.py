@@ -22,12 +22,20 @@ class Setup:
     spec: Specification
     dist_dir: str
     started_at: float = time()
+    user_only = False
+    state = ''
+    state_ts = 0
+    usage = ''
+    usage_ts = 0
 
     def __init__(self, spec: Specification, dist_dir='.'):
         self.dist_dir = dist_dir
         self.spec = spec
         self.pref = Preferences.from_dict(spec)
         self.disk = DiskSetup.from_dict(spec)
+
+    def user_only(self):
+        self.user_only = True
 
     def input_missing(self):
         self.pref.input_missing()
@@ -70,20 +78,34 @@ class Setup:
             self.spec.script(),
         ], 2)
 
-    def write_dist(self):
+    def write_dist_init(self):
         if not path.isdir(self.dist_dir): mkdir(self.dist_dir)
         with open(f'{self.dist_dir}/main.bash', 'w') as file:
             file.write(self.iso_script())
         with open(f'{self.dist_dir}/root.bash', 'w') as file:
             file.write(self.root_script())
+
+    def write_dist_user(self):
+        if not path.isdir(self.dist_dir): mkdir(self.dist_dir)
         with open(f'{self.dist_dir}/user.bash', 'w') as file:
             file.write(self.user_script())
 
-    def read_state(self) -> str:
+    def write_dist(self):
+        if not self.user_only: self.write_dist_init()
+        self.write_dist_user()
+
+    def read_state(self):
+        if time() - self.state_ts < 1: return
         try:
+            self.state_ts = time()
             with open(f'{self.dist_dir}/state') as file:
-                return file.read().strip()
-        except: return ''
+                self.state = file.readline().strip()
+        except: return
+
+    def read_usage(self):
+        if time() - self.usage_ts < 1: return
+        self.usage_ts = time()
+        self.usage = mnt_usage()
 
     def passed(self) -> str:
         return fmt_seconds(int(time() - self.started_at))
@@ -91,13 +113,14 @@ class Setup:
     def status_bar(self) -> str:
         moment = datetime.now().strftime('%H:%M:%S')
         passed = self.passed()
-        state = self.read_state()
-        usage = mnt_usage()
-        return status_bar(usage, f'{passed} {moment}', state)
+        self.read_usage()
+        self.read_state()
+        return status_bar(self.usage, f'{passed} {moment}', self.state)
 
     def exec_dist(self):
+        entry = ('main', 'user') [self.user_only]
         proc = Popen(
-            ['bash', f'{self.dist_dir}/main.bash'],
+            ['bash', f'{self.dist_dir}/{entry}.bash'],
             stdout=PIPE,
             stderr=STDOUT)
         while line := proc.stdout.readline().decode('utf-8'):
