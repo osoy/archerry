@@ -41,6 +41,8 @@ pkg:
       - adobe-source-han-serif-otc-fonts
       - materia-gtk-theme
       - pavucontrol
+      - tag: emoji
+        pkg: remove:libxft libxft-bgra ttf-twemoji
       - tag: net
         pkg: firefox chromium
       - tag: media

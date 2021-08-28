@@ -8,7 +8,7 @@ from datetime import datetime
 from disk import DiskSetup
 from specification import Specification
 from preferences import Preferences
-from utils import concat, bash_pipe
+from utils import concat, bash_pipe, write_file
 from ui import status_bar, fmt_seconds, bin_unit
 from templates import *
 
@@ -41,7 +41,7 @@ class Setup:
         self.pref.input_missing()
         self.disk.input_missing()
 
-    def iso_script(self) -> str:
+    def main_script(self) -> str:
         return concat([
             SCRIPT_HEAD,
             CWD,
@@ -79,16 +79,11 @@ class Setup:
         ], 2)
 
     def write_dist_init(self):
-        if not path.isdir(self.dist_dir): mkdir(self.dist_dir)
-        with open(f'{self.dist_dir}/main.bash', 'w') as file:
-            file.write(self.iso_script())
-        with open(f'{self.dist_dir}/root.bash', 'w') as file:
-            file.write(self.root_script())
+        write_file(f'{self.dist_dir}/main.bash', self.main_script())
+        write_file(f'{self.dist_dir}/root.bash', self.root_script())
 
     def write_dist_user(self):
-        if not path.isdir(self.dist_dir): mkdir(self.dist_dir)
-        with open(f'{self.dist_dir}/user.bash', 'w') as file:
-            file.write(self.user_script())
+        write_file(f'{self.dist_dir}/user.bash', self.user_script())
 
     def write_dist(self):
         if not self.user_only: self.write_dist_init()

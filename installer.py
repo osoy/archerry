@@ -8,13 +8,19 @@ class Installer(str, Enum):
     YAY = 'yay'
 
     def sync_cmd(self) -> str:
-        return f'{self} -Syu --noconfirm'
+        return f'{self} --noconfirm -Syu'
 
     def add_cmd(self) -> str:
-        return f'{self} -S --needed --noconfirm'
+        return f'{self} --noconfirm -S --needed'
+
+    def del_cmd(self) -> str:
+        return f'{self} --noconfirm -Rnsdd'
 
     def script(self, pkg_list: list[str]) -> str:
-        adds = [f'{self.add_cmd()} {pkg}' for pkg in pkg_list]
+        adds = []
+        for pkg in pkg_list:
+            if pkg[:7] == 'remove:': adds.append(f'{self.del_cmd()} {pkg[7:]}')
+            else: adds.append(f'{self.add_cmd()} {pkg}')
         call = concat([self.sync_cmd()] + adds)
         if self == Installer.YAY:
             call = concat([templates.INSTALL_YAY, call], 2)
@@ -24,14 +30,13 @@ class Installer(str, Enum):
         if self == Installer.YAY: pkg_list.append('yay')
         missing_count = 0
         for pkg in pkg_list:
+            if pkg[:7] == 'remove:': continue
             proc = run(
-                f'pacman -Q {pkg} || pacman -Qg {pkg}',
+                ['bash', '-c', f'pacman -Q {pkg} || pacman -Qg {pkg}'],
                 stdout=DEVNULL,
-                stderr=DEVNULL,
-                shell=True)
-            if proc.returncode < 0: exit(1)
-            elif proc.returncode > 0:
+                stderr=DEVNULL)
+            if proc.returncode > 0:
                 print(f'Missing: {pkg}')
                 missing_count += 1
-        print(f'Total {len(pkg_list)}, Missing {missing_count}')
+        print('Total %i, Missing %i' % (len(pkg_list), missing_count))
         return missing_count

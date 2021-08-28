@@ -1,5 +1,5 @@
 from typing import Union
-from os.path import realpath
+from os.path import realpath, isdir
 from subprocess import run, PIPE, DEVNULL
 
 def repo_url(val: str) -> str:
@@ -39,3 +39,9 @@ def bash_lines(cmd: str) -> list[str]:
 def search(query: str, options: set[str]) -> Union[str, list[str]]:
     if query in options: return query
     return [opt for opt in options if query.upper() in opt.upper()]
+
+def write_file(path: str, content: str, out = True):
+    directory = base_dir(path)
+    if not isdir(directory): run(['mkdir', '-p', directory])
+    with open(path, 'w') as file: file.write(content)
+    if out: print(f'Written {len(content)} characters to {path}')

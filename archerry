@@ -30,12 +30,9 @@ try:
     spec = Specification.from_file(args.file)
     setup = Setup(spec, rel_path('dist'))
     if args.opt == 'c': exit(spec.check())
-    elif args.opt == 'u':
-        setup.user_only()
-        setup.write_dist()
-        exit(setup.run())
-    setup.input_missing()
+    elif args.opt == 'u': setup.user_only()
+    else: setup.input_missing()
     setup.write_dist()
-    if input_bool('Run'): setup.run()
+    if input_bool('Run'): exit(setup.run())
 except KeyboardInterrupt:
     print('Interrupt')
