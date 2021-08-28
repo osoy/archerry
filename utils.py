@@ -44,4 +44,4 @@ def write_file(path: str, content: str, out = True):
     directory = base_dir(path)
     if not isdir(directory): run(['mkdir', '-p', directory])
     with open(path, 'w') as file: file.write(content)
-    if out: print(f'Written {len(content)} characters to {path}')
+    if out: print(f'Wrote {len(content)} characters to {path}')

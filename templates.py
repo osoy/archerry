@@ -28,6 +28,15 @@ MNT_USAGE = '''
 df -B 1 | sed -n 's|^[^ ]\+ \+[^ ]\+ \+\([^ ]\+\) .\+ /mnt$|\\1|p'
 '''
 
+BATTERY = '''
+find /sys/class/power_supply/BAT* -maxdepth 0 2>/dev/null | while read -r bat
+do printf '%i %i %i\\n' \\
+	$(cat "$bat/charge_now") \\
+    $(cat "$bat/charge_full") \\
+	$(cat "$bat/status" | grep -c Charging)
+done
+'''
+
 BLK_UUID = Template('''
 lsblk -o path,uuid | sed -n 's|^$device \+\(.*\)$$|\\1|p'
 ''')

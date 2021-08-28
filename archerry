@@ -47,7 +47,7 @@ try:
     if args.opt == 'c': exit(spec.check())
     elif args.opt == 'l': exit(print(' '.join(spec.tags())))
     elif args.opt == 'L': exit(print('\n'.join(spec.tags())))
-    elif args.opt == 'u': setup.user_only()
+    elif args.opt == 'u': setup.user_only = True
     else: setup.input_missing()
     setup.write_dist()
     if input_bool('Run'): exit(setup.run())

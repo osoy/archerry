@@ -14,7 +14,7 @@ def efi_exists() -> bool:
 def available_disks() -> list[[str, int]]:
     disks = []
     for line in bash_lines(templates.DISKS):
-        path, size = line.split(' ')
+        path, size = line.split()
         try:
             size = int(size)
             if size > 0: disks.append([path, int(size)])

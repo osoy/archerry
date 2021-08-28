@@ -5,15 +5,27 @@ from subprocess import Popen, run, PIPE, STDOUT
 from time import time, sleep
 from datetime import datetime
 
+from cached import Cached
+from utils import concat, bash_pipe, bash_lines, write_file
+from ui import status_bar, fmt_seconds, bin_unit
+from templates import *
 from disk import DiskSetup
 from specification import Specification
 from preferences import Preferences
-from utils import concat, bash_pipe, write_file
-from ui import status_bar, fmt_seconds, bin_unit
-from templates import *
 
 def mnt_usage() -> str:
     try: return bin_unit(int(bash_pipe(MNT_USAGE)))
+    except: return ''
+
+def battery() -> str:
+    try:
+        results = []
+        for line in bash_lines(BATTERY):
+            now, full, charging = line.split()
+            entry = f'{int(int(now) * 100 / int(full))}%'
+            if int(charging): entry += '='
+            results.append(entry)
+        return ' '.join(results)
     except: return ''
 
 class Setup:
@@ -23,19 +35,34 @@ class Setup:
     dist_dir: str
     started_at: float = time()
     user_only = False
-    state = ''
-    state_ts = 0
-    usage = ''
-    usage_ts = 0
+    state: Cached[str]
+    usage: Cached[str]
+    battery: Cached[str]
 
     def __init__(self, spec: Specification, dist_dir='.'):
         self.dist_dir = dist_dir
         self.spec = spec
         self.pref = Preferences.from_dict(spec)
         self.disk = DiskSetup.from_dict(spec)
+        self.state = Cached(self.read_state)
+        self.usage = Cached(mnt_usage)
+        self.battery = Cached(battery)
 
-    def user_only(self):
-        self.user_only = True
+    def read_state(self):
+        try:
+            with open(f'{self.dist_dir}/state') as file:
+                return file.readline().strip()
+        except: return ''
+
+    def passed(self) -> str:
+        return fmt_seconds(int(time() - self.started_at))
+
+    def status_bar(self) -> str:
+        moment = datetime.now().strftime('%H:%M:%S')
+        return status_bar(
+            f'{moment}  {self.battery.get()}',
+            f'{self.usage.get()}  {self.passed()}',
+            self.state.get())
 
     def input_missing(self):
         self.pref.input_missing()
@@ -88,29 +115,6 @@ class Setup:
     def write_dist(self):
         if not self.user_only: self.write_dist_init()
         self.write_dist_user()
-
-    def read_state(self):
-        if time() - self.state_ts < 1: return
-        try:
-            self.state_ts = time()
-            with open(f'{self.dist_dir}/state') as file:
-                self.state = file.readline().strip()
-        except: return
-
-    def read_usage(self):
-        if time() - self.usage_ts < 1: return
-        self.usage_ts = time()
-        self.usage = mnt_usage()
-
-    def passed(self) -> str:
-        return fmt_seconds(int(time() - self.started_at))
-
-    def status_bar(self) -> str:
-        moment = datetime.now().strftime('%H:%M:%S')
-        passed = self.passed()
-        self.read_usage()
-        self.read_state()
-        return status_bar(self.usage, f'{passed} {moment}', self.state)
 
     def exec_dist(self):
         entry = ('main', 'user') [self.user_only]
