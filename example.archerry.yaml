@@ -1,6 +1,6 @@
-yay: true
-swap: 1024
 timezone: Europe/Helsinki
+swap: 1024
+yay: true
 
 pkg:
   - tree tmux calc neovim
@@ -132,5 +132,5 @@ cmd:
   - tag: devel
     cmd:
       - sudo runuser -l postgres -c 'initdb -D /var/lib/postgres/data'
-      - sudo usermod -aG docker $USER
+      - sudo usermod -aG docker "$USER"
       - yarn global add npm node-gyp degit wscat package-size
