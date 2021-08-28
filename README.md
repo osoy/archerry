@@ -104,11 +104,11 @@ Currently the recommended way to use Archerry is as follows:
    ```
 5. Download your specification file with
    ```bash
-   curl <URL> -o specification.yaml
+   curl <URL> -o spec.yaml
    ```
 6. Run Archerry with
    ```bash
-   ./archerry/archerry specification.yaml
+   ./archerry/archerry spec.yaml
    ```
 
 After installation a log file is created at `/var/log/archerry.log`.
@@ -122,10 +122,10 @@ Created scripts are `main.bash`, `root.bash`, `user.bash` and are stored in
 `main.bash` includes disk setup and pacstrap which should be run from iso. It
 also includes chroot entries to `root.bash` and `user.bash`.
 
-`root.bash` is run after pacstrap as root and includes bootloader setup, user
-creation and currently locale & timezone setup.
+`root.bash` is run after pacstrap as root and includes bootloader setup and
+user creation.
 
-`user.bash` is run last as created user and includes most that's created from
+`user.bash` is run last as created user and includes most that's generated from
 the specification file.
 
 You can check installed files and packages with

@@ -32,11 +32,16 @@ class Preferences:
         if not self.timezone:
             self.timezone = input_choice('Timezone', timezones())
 
-    def script(self):
+    def root_script(self):
         return concat([
             templates.SETUP_HOST.substitute(hostname=self.hostname),
-            templates.SETUP_TIMEZONE.substitute(timezone=self.timezone),
             templates.SETUP_USER.substitute(
                 name=self.username,
                 password=self.password),
+        ], 2)
+
+    def user_script(self):
+        return concat([
+            templates.SETUP_LOCALE,
+            templates.SETUP_TIMEZONE.substitute(timezone=self.timezone),
         ], 2)

@@ -93,15 +93,15 @@ class Setup:
         return concat([
             SCRIPT_HEAD,
             SETUP_CLOCK,
-            SETUP_LOCALE,
             SETUP_PACMAN,
-            self.pref.script(),
+            self.pref.root_script(),
             self.disk.bootloader_script(),
         ], 2)
 
     def user_script(self) -> str:
         return concat([
             SCRIPT_HEAD,
+            self.pref.user_script(),
             self.spec.script(),
         ], 2)
 

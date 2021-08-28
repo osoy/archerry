@@ -54,7 +54,7 @@ rm -f /mnt/$file
 
 CHROOT_USER = Template('''
 cp $file /mnt
-arch-chroot /mnt runuser -l $user -c 'bash /$file'
+arch-chroot /mnt runuser -l $user -c 'cd; bash /$file'
 rm -f /mnt/$file
 ''')
 
@@ -113,9 +113,9 @@ echo '$hostname' > /etc/hostname
 ''')
 
 SETUP_LOCALE = '''
-echo 'LANG=en_US.UTF-8' > /etc/locale.conf
-echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
-locale-gen
+echo 'LANG=en_US.UTF-8' | sudo tee /etc/locale.conf
+echo 'en_US.UTF-8 UTF-8' | sudo tee /etc/locale.gen
+sudo locale-gen
 '''
 
 TIMEZONES = '''
@@ -123,7 +123,7 @@ timedatectl list-timezones
 '''
 
 SETUP_TIMEZONE = Template('''
-timedatectl set-timezone $timezone
+sudo timedatectl set-timezone $timezone
 ''')
 
 INSTALL_YAY = '''
