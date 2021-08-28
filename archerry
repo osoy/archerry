@@ -7,7 +7,7 @@ from utils import rel_path
 from specification import Specification
 
 parser = ArgumentParser(description='Declerative Arch Linux installer')
-parser.add_argument('file', help='Specification file')
+parser.add_argument('file', help='Path to specification file')
 parser.add_argument(
     '-c',
     '--check',
@@ -15,6 +15,21 @@ parser.add_argument(
     dest='opt',
     const='c',
     help='Check with specification',
+)
+parser.add_argument(
+    '-l',
+    '--list',
+    action='store_const',
+    dest='opt',
+    const='l',
+    help='List tags in specification',
+)
+parser.add_argument(
+    '-L',
+    action='store_const',
+    dest='opt',
+    const='L',
+    help='List tags in specification on multiple lines',
 )
 parser.add_argument(
     '-u',
@@ -30,6 +45,8 @@ try:
     spec = Specification.from_file(args.file)
     setup = Setup(spec, rel_path('dist'))
     if args.opt == 'c': exit(spec.check())
+    elif args.opt == 'l': exit(print(' '.join(spec.tags())))
+    elif args.opt == 'L': exit(print('\n'.join(spec.tags())))
     elif args.opt == 'u': setup.user_only()
     else: setup.input_missing()
     setup.write_dist()

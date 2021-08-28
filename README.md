@@ -8,7 +8,7 @@ Declerative Arch Linux installer.
 - [x] base install (kernel, firmware, base, bootloader)
 - [x] system setup from a specification file
 - [x] status
-- [ ] incremental execution
+- [x] incremental execution
 - [ ] spec tag selection
 - [ ] statistics
 - [ ] curl spec file

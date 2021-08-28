@@ -18,6 +18,9 @@ class Specification(dict):
     def installer(self) -> Installer:
         return (Installer.PACMAN, Installer.YAY) [self.get('yay')]
 
+    def tags(self) -> list[str]:
+        return tag.full_list_of(self, 'tag')
+
     def pkg_list(self) -> list[str]:
         return list(chain(*map(
             lambda item : item.split(),
