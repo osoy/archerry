@@ -1,16 +1,17 @@
 # Archerry 🌸
 
+[![Pipeline status](https://gitlab.com/rasmusmerzin/archerry/badges/main/pipeline.svg)](https://gitlab.com/rasmusmerzin/archerry/-/commits/main)
+[![Coverage report](https://gitlab.com/rasmusmerzin/archerry/badges/main/coverage.svg)](https://gitlab.com/rasmusmerzin/archerry/-/commits/main)
+
 Declerative Arch Linux installer.
 
 ## Features
 
-- [x] basic partitioning
-- [x] base install (kernel, firmware, base, bootloader)
-- [x] system setup from a specification file
-- [x] incremental execution
-- [ ] spec tag selection
-- [ ] statistics
-- [ ] custom iso
+- Basic partitioning
+- Base install (kernel, firmware, base, bootloader)
+- System setup from a specification file
+- Incremental execution
+- Tag selection
 
 ## Specification file
 
@@ -22,12 +23,12 @@ shell scripts are composed from the specification and run.
 
 - `hostname` ‒ Hostname which is shown on the network
 - `username` ‒ Username of the admin account
-- `password` ‒ Password for the admin account
-  > Not recommended to store in spec
+- `password` ‒ Password for the admin account  
+  _Not recommended to store in spec_
 - `timezone` ‒ Timezone keyword for
   [`timedatectl`](https://man.archlinux.org/man/timedatectl.1)
-- `disk` ‒ Disk device path eg. `/dev/sda`
-  > Not recommended to store in spec since it may not be consistent
+- `disk` ‒ Disk device path eg. `/dev/sda`  
+  _Not recommended to store in spec since it may not be consistent_
 - `swap` ‒ Swap size in MiB
 - `yay` ‒ Whether to install and use `yay` for installing packages
 - `pkg` ‒ Tree of packages
@@ -81,6 +82,13 @@ cmd:
       - cd ~/repos/cfg-nvim && make
       - cd ~/repos/cfg-bash && make
 ```
+
+#### Tags
+
+Tags are a way of making the specification file modular. Tags act similar to
+CSS selectors. In the example by excluding config tag during execution
+repositories `cfg-nvim` and `cfg-bash` are not cloned nor will `make` be run
+for them.
 
 ### Usage
 
