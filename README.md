@@ -1,4 +1,8 @@
-# Archerry 🌸
+<h1>
+  <img src="./logo.svg" />
+  <br />
+  Archerry
+</h1>
 
 [![Pipeline status](https://gitlab.com/osoy/archerry/badges/main/pipeline.svg)](https://gitlab.com/osoy/archerry/-/commits/main)
 [![Coverage report](https://gitlab.com/osoy/archerry/badges/main/coverage.svg)](https://gitlab.com/osoy/archerry/-/commits/main)
