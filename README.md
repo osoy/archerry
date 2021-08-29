@@ -1,7 +1,7 @@
 # Archerry 🌸
 
-[![Pipeline status](https://gitlab.com/rasmusmerzin/archerry/badges/main/pipeline.svg)](https://gitlab.com/rasmusmerzin/archerry/-/commits/main)
-[![Coverage report](https://gitlab.com/rasmusmerzin/archerry/badges/main/coverage.svg)](https://gitlab.com/rasmusmerzin/archerry/-/commits/main)
+[![Pipeline status](https://gitlab.com/osoy/archerry/badges/main/pipeline.svg)](https://gitlab.com/osoy/archerry/-/commits/main)
+[![Coverage report](https://gitlab.com/osoy/archerry/badges/main/coverage.svg)](https://gitlab.com/osoy/archerry/-/commits/main)
 
 Declerative Arch Linux installer.
 
@@ -39,7 +39,7 @@ shell scripts are composed from the specification and run.
 #### Example
 
 Simple example of a specification file. See more at
-[`example.archerry.yaml`](./example.archerry.yaml).
+[`rasmusmerzin/cfg-archerry`](https://gitlab.com/rasmusmerzin/cfg-archerry).
 
 ```yaml
 hostname: MyLaptop
@@ -108,7 +108,7 @@ Currently the recommended way to use Archerry is as follows:
    ```
 4. Download Archerry with
    ```bash
-   clone https://gitlab.com/rasmusmerzin/archerry
+   clone https://gitlab.com/osoy/archerry
    ```
 5. Download your specification file with
    ```bash
