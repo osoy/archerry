@@ -1,5 +1,14 @@
 image: python:latest
 
+cache:
+  paths:
+    - .cache
+
+before_script:
+  - python -V
+  - pip install --cache-dir=.cache coverage
+
 tests:
   script:
-    - python -m unittest test_*.py
+    - coverage run --source=. -m unittest test_*
+    - coverage report -m | grep -v '^test_'
