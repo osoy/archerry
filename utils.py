@@ -4,11 +4,17 @@ from subprocess import run, PIPE, DEVNULL
 
 def repo_url(val: str) -> str:
     if '@' not in val and '://' not in val: val = f'https://{val}'
+    if val[-4:] != '.git': val += '.git'
     return val
 
 def base_dir(path: str) -> str:
-    if path[-1] == '/': path = path[0:-1]
-    return '/'.join(path.split('/')[0:-1])
+    if not len(path): return '.'
+    if len(path) > 1 and path[-1] == '/': path = path[0:-1]
+    result = '/'.join(path.split('/')[0:-1])
+    if result: return result
+    else:
+        if path[0] == '/': return '/'
+        else: return '.'
 
 def rel_path(path: str) -> str:
     if path and path[0] != '/': path = '/' + path
@@ -45,7 +51,7 @@ def write_script(content: str, path: str) -> str:
     prefix = ('', 'sudo ') [path[0] == '/']
     mkdir_script = f'{prefix}mkdir -p {base_dir(path)}'
     print_script = f"printf '{content}' | {prefix}tee {path} >/dev/null"
-    return '\n'.join([mkdir_script, print_script])
+    return concat([mkdir_script, print_script])
 
 def write_file(path: str, content: str, out = True):
     directory = base_dir(path)
