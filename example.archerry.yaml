@@ -22,6 +22,7 @@ pkg:
       - postgresql postgresql-libs
       - docker docker-compose
       - nodejs nvm yarn prettier
+      - python-pip python-coverage
       - jdk-openjdk gradle maven
       - miniserve
       - shellcheck

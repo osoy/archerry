@@ -1,12 +1,16 @@
-from itertools import chain
+from typing import Optional
 from pathlib import Path
 import yaml
+
 import tag
 from preferences import Preferences
 from installer import Installer
-from utils import repo_url, base_dir, write_script, concat
+from utils import repo_url, base_dir, write_script, concat, flatten
+from ui import input_multichoice
 
 class Specification(dict):
+    tags: Optional[list[str]] = None
+
     @classmethod
     def from_file(cls, name: str):
         try:
@@ -15,37 +19,39 @@ class Specification(dict):
             print(f"could not read '{name}'")
             exit(4)
 
+    def input_tags(self):
+        tag_list = self.tag_list()
+        print('Available tags: %s' % ' '.join(tag_list))
+        self.tags = input_multichoice('Select tags', tag_list)
+
     def installer(self) -> Installer:
         return (Installer.PACMAN, Installer.YAY) [self.get('yay')]
 
-    def tags(self) -> list[str]:
-        return tag.full_list_of(self, 'tag')
+    def tag_list(self) -> list[str]:
+        return sorted(list(set(tag.full_list_of(self, 'tag'))))
 
     def pkg_list(self) -> list[str]:
-        return list(chain(*map(
-            lambda item : item.split(),
-            tag.list_of(self, 'pkg'))))
+        return flatten(
+            [item.split() for item in tag.list_of(self, 'pkg', self.tags)])
 
     def pkg_script(self) -> str:
         return self.installer().script(self.pkg_list())
 
     def git_script(self) -> str:
         return concat(map(
-            lambda entry : 'git clone %s %s' % (
-                repo_url(entry['repo']),
-                entry.get('path') or ''),
-            tag.list_of(self, 'git')))
+            lambda entry : 'git clone %s %s' % \
+                (repo_url(entry['repo']), entry.get('path') or ''),
+            tag.list_of(self, 'git', self.tags)))
 
     def writes(self) -> list[dict]:
-        return tag.list_of(self, 'fs')
+        return tag.list_of(self, 'fs', self.tags)
 
     def fs_script(self) -> str:
-        return concat(map(
-            lambda entry : write_script(entry['write'], entry['path']),
-            self.writes()))
+        return concat(
+            [write_script(e['write'], e['path']) for e in self.writes()])
 
     def custom_script(self) -> str:
-        return concat(tag.list_of(self, 'cmd'))
+        return concat(tag.list_of(self, 'cmd', self.tags))
 
     def script(self) -> str:
         return concat([
