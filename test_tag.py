@@ -1,5 +1,5 @@
-from unittest import main, TestCase
-from tag import list_of, full_list_of
+from unittest import TestCase
+from tag import *
 
 class TestTag(TestCase):
     def test_list_of_strs(self):
