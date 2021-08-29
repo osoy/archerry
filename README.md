@@ -9,15 +9,16 @@ Declerative Arch Linux installer.
 
 - Basic partitioning
 - Base install (kernel, firmware, base, bootloader)
-- System setup from a specification file
+- System setup from a human-readable specification file
 - Incremental execution
 - Tag selection
 
 ## Specification file
 
-The system is configured with a YAML formatted specification/config file. Upon
-execution user is prompted to fill missing fields in the specification and then
-shell scripts are composed from the specification and run.
+The system is configured with a [YAML](https://yaml.org) specification/config
+file. Upon execution user is prompted to fill missing fields in the
+specification and then shell scripts are composed from the specification and
+run.
 
 ### Options
 
@@ -166,3 +167,12 @@ See more with
 ```bash
 archerry -h
 ```
+
+## Related projects
+
+- [Arch Installer](https://github.com/archlinux/archinstall)
+  Official Arch Linux Installer
+- [Decpac](https://github.com/rendaw/decpac)
+  Arch Linux declarative package management
+- [NixOS](https://nixos.org)
+  Linux distribution based on the Nix package manager
