@@ -37,6 +37,11 @@ def flatten(arr: list[any]) -> list[any]:
         else: result.append(elem)
     return result
 
+def overlap(left: list[any], right: list[any]) -> bool:
+    for item in left:
+        if item in right: return True
+    return False
+
 def bash_pipe(cmd: str) -> str:
     return run(
         ['bash', '-c', cmd],

@@ -38,6 +38,16 @@ class Test(TestCase):
         self.assertEqual(search('A', ['Aa', 'aa']), ['Aa', 'aa'])
         self.assertEqual(search('Aa', ['Aa', 'aa']), 'Aa')
 
+    def test_overlap(self):
+        self.assertEqual(overlap([], []), False)
+        self.assertEqual(overlap([1], []), False)
+        self.assertEqual(overlap([], [1]), False)
+        self.assertEqual(overlap([2], [1]), False)
+        self.assertEqual(overlap([7, 4], [1, 2, 3]), False)
+        self.assertEqual(overlap([1, 2], [1]), True)
+        self.assertEqual(overlap([1], [1, 2]), True)
+        self.assertEqual(overlap([1, 4], [1, 2, 3]), True)
+
     def test_bash_pipe(self):
         self.assertEqual(bash_pipe("printf '%i\n' $((1+2))"), '3\n')
 
