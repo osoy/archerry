@@ -45,10 +45,11 @@ try:
     spec = Specification.from_file(args.file)
     setup = Setup(spec, rel_path('dist'))
     if args.opt == 'c': exit(spec.check())
-    elif args.opt == 'l': exit(print(' '.join(spec.tags())))
-    elif args.opt == 'L': exit(print('\n'.join(spec.tags())))
+    elif args.opt == 'l': exit(print(' '.join(spec.tag_list())))
+    elif args.opt == 'L': exit(print('\n'.join(spec.tag_list())))
     elif args.opt == 'u': setup.user_only = True
     else: setup.input_missing()
+    spec.input_tags()
     setup.write_dist()
     if input_bool('Run'): exit(setup.run())
 except KeyboardInterrupt:

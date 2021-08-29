@@ -39,14 +39,24 @@ class Test(TestCase):
         self.assertEqual(search('Aa', ['Aa', 'aa']), 'Aa')
 
     def test_overlap(self):
-        self.assertEqual(overlap([], []), False)
-        self.assertEqual(overlap([1], []), False)
-        self.assertEqual(overlap([], [1]), False)
-        self.assertEqual(overlap([2], [1]), False)
-        self.assertEqual(overlap([7, 4], [1, 2, 3]), False)
-        self.assertEqual(overlap([1, 2], [1]), True)
-        self.assertEqual(overlap([1], [1, 2]), True)
-        self.assertEqual(overlap([1, 4], [1, 2, 3]), True)
+        self.assertEqual(overlap([], []), [])
+        self.assertEqual(overlap([1], []), [])
+        self.assertEqual(overlap([], [1]), [])
+        self.assertEqual(overlap([2], [1]), [])
+        self.assertEqual(overlap([7, 4], [1, 2, 3]), [])
+        self.assertEqual(overlap([1, 2], [1]), [1])
+        self.assertEqual(overlap([1], [1, 2]), [1])
+        self.assertEqual(overlap([3, 1, 4], [1, 2, 3]), [3, 1])
+
+    def test_exclude(self):
+        self.assertEqual(exclude([], []), [])
+        self.assertEqual(exclude([1], []), [1])
+        self.assertEqual(exclude([], [1]), [])
+        self.assertEqual(exclude([2], [1]), [2])
+        self.assertEqual(exclude([7, 4], [1, 2, 3]), [7, 4])
+        self.assertEqual(exclude([1, 2], [1]), [2])
+        self.assertEqual(exclude([1], [1, 2]), [])
+        self.assertEqual(exclude([3, 1, 4], [1, 2, 3]), [4])
 
     def test_bash_pipe(self):
         self.assertEqual(bash_pipe("printf '%i\n' $((1+2))"), '3\n')

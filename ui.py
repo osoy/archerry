@@ -2,7 +2,7 @@ from typing import Optional, TypeVar, Union
 from os import get_terminal_size
 from math import log
 from getpass import getpass
-from utils import search
+from utils import search, overlap, exclude
 
 T = TypeVar('T')
 
@@ -55,6 +55,15 @@ def input_choice(prompt: str, options: set[str]) -> str:
             return match[0]
         elif len(match) == 0: print('No matches')
         elif query: print('Multiple matches')
+
+def input_multichoice(prompt: str, options: set[str]) -> list[str]:
+    while True:
+        query = safe_input(prompt)
+        if not query and input_bool('Select all'): return options
+        selection = overlap(query.split(), options)
+        print('+ [%s]\n- [%s]' % \
+            (' '.join(selection), ' '.join(exclude(options, selection))))
+        if input_bool('Submit'): return selection
 
 def input_index(prompt: str, options: list[T]) -> T:
     while True:
