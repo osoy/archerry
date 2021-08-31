@@ -71,7 +71,7 @@ rankmirrors /etc/pacman.d/mirrorlist.bak |
 '''
 
 PACSTRAP = '''
-pacstrap /mnt linux{,-firmware} base{,-devel} grub sudo vi
+pacstrap /mnt linux{,-firmware} base{,-devel} grub sudo vi git
 '''
 
 SETUP_SUDO = '''
